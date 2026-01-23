@@ -32,9 +32,6 @@ export default Blits.Component('CardRow', {
     },
   },
   hooks: {
-    init() {
-      this.focused = 0
-    },
     focus() {
       this.$trigger('focused')
     },

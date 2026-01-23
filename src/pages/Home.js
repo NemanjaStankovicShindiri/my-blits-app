@@ -12,7 +12,12 @@ export default Blits.Component('Home', {
     Column,
   },
   template: `
-    <Element w="1920" h="1080" :src="$src"><Column :items="$items" ref="content" /> </Element>
+    <Element w="1920" h="1080" :src="$src"
+      ><Element w="1920" h="1080" color="{top: '#000000ff', left: '#000000ff'}" alpha="0.6" /><Column
+        :items="$items"
+        ref="content"
+      />
+    </Element>
   `,
   state() {
     /** @type {MovieRow[]} */
@@ -26,19 +31,16 @@ export default Blits.Component('Home', {
   hooks: {
     ready() {
       this.fetchData()
-      const content = this.$select('content')
-      content.$focus()
+      const content = this.$select('content')?.$focus()
     },
     init() {
       this.$listen('changeBackground', ({ img }) => {
-        console.log(img)
         if (this.backgroundDebounce) {
           this.$clearTimeout(this.backgroundDebounce)
         }
 
         this.backgroundDebounce = this.$setTimeout(() => {
           this.src = img
-          console.log(this.src)
         }, 1000)
       })
     },

@@ -17,26 +17,27 @@ export default Blits.Component('Column', {
       focused: 0,
     }
   },
+  hooks: {
+    ready() {
+      console.log('Ready triggers')
+    },
+    focus() {
+      this.$trigger('focused')
+    },
+  },
   watch: {
     focused(value) {
+      console.log('Column triggers')
       const focusedItem = this.$select('cardRow' + value)
-      console.log(focusedItem)
       if (focusedItem && focusedItem.$focus) {
         focusedItem.$focus()
       }
-    },
-  },
-  hooks: {
-    focus() {
-      console.log('column')
-      this.$trigger('focused')
     },
   },
   input: {
     up() {
       this.focused = Math.max(this.focused - 1, 0)
       this.scroll()
-      console.log(this.items)
     },
     down() {
       this.focused = Math.min(this.focused + 1, this.items.length - 1)
