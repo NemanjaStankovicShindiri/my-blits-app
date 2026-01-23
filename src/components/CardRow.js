@@ -11,6 +11,7 @@ export default Blits.Component('CardRow', {
     <Element :x.transition="$x" h="600" ref="row"
       ><Card
         :for="(item, index) in $movies"
+        :range="{from: $range, to: $range + 6}"
         :x="$index * 360"
         :src="$item.backdrop_path"
         :text="$item.original_title"
@@ -20,6 +21,7 @@ export default Blits.Component('CardRow', {
     return {
       focused: 0,
       x: 0,
+      range: 0,
     }
   },
 
@@ -39,10 +41,12 @@ export default Blits.Component('CardRow', {
   input: {
     left() {
       this.focused = Math.max(this.focused - 1, 0)
+      this.range = this.focused
       this.scroll()
     },
     right() {
       this.focused = Math.min(this.focused + 1, this.movies.length - 1)
+      this.range = this.focused
       this.scroll()
     },
   },
