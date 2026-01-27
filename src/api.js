@@ -11,7 +11,7 @@ export async function fetchTMDBData() {
       {
         name: 'Popular Movies',
         url: `${BASE_URL}/movie/popular?api_key=${API_KEY}&language=en-US&page=1`,
-        type: CARD_TYPE.POSTER,
+        type: CARD_TYPE.CARD,
       },
       {
         name: 'Trending Movies',
@@ -26,7 +26,7 @@ export async function fetchTMDBData() {
       {
         name: 'Upcoming Movies',
         url: `${BASE_URL}/movie/upcoming?api_key=${API_KEY}&language=en-US&page=1`,
-        type: CARD_TYPE.POSTER,
+        type: CARD_TYPE.CARD,
       },
     ]
 

@@ -1,14 +1,8 @@
 import Blits from '@lightningjs/blits'
-import Card from './Card'
-import Poster from './Poster'
 import { getBackdropUrl } from '../api'
 
 export default Blits.Component('CardRow', {
   props: ['movies', 'type', 'itemSpacing'],
-  components: {
-    Card,
-    Poster,
-  },
   template: `
     <Element :x.transition="$x" h="600" ref="row"
       ><Component

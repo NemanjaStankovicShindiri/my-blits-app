@@ -1,15 +1,24 @@
 import Blits from '@lightningjs/blits'
-import CardRow from './CardRow'
+import List from './List'
 
 export default Blits.Component('Column', {
   props: ['items', 'rowSpacing'],
-  components: { CardRow },
+  components: { List },
   template: `
     <Element w="1920" :y.transition="$y"
       ><Element :for="(item, index) in $items" x="64" :y="$rowY($index)">
         <Text w="103" h="29" :content="$item.name" font="InterBold" size="24" letterspacing="6" />
         <Element w="100%" :h="$item.type.height" y="39" overflow="true" ref="backgroundEl"
-          ><CardRow :movies="$item.movies" :type="$item.type" :ref="'cardRow'+$index" w="100%" itemSpacing="30"
+          ><List
+            :items="$item.movies"
+            :type="$item.type"
+            :itemWidth="$item.type.width"
+            :itemHeight="$item.type.height"
+            :ref="'cardRow'+$index"
+            autoScroll="true"
+            looping="true"
+            itemOffset="30"
+            autoscrollOffset="5"
         /></Element> </Element
     ></Element>`,
   state() {
