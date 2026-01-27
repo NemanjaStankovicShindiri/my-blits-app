@@ -1,14 +1,14 @@
 import Blits from '@lightningjs/blits'
 import { getBackdropUrl } from '../api'
 
-export default Blits.Component('Card', {
+export default Blits.Component('Poster', {
   props: ['src', 'text'],
   template: `
     <Element
-      w="100%"
-      h="100%"
-      :scale="$hasFocus?1.1:1"
-      :effects="[{type: 'radius', props: {radius: 20}}, {type: 'border', props: {width: 6, color: '#EFEFEF'}}]"
+      w="1280"
+      h="720"
+      :scale="$hasFocus?1.02:1"
+      :effects="$hasFocus?[{type: 'radius', props: {radius: 20}}, {type: 'border', props: {width: 6, color: '#EFEFEF'}}]:[]"
       ><Element
         w="100%"
         h="100%"

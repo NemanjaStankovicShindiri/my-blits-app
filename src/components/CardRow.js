@@ -1,18 +1,23 @@
 import Blits from '@lightningjs/blits'
 import Card from './Card'
+import Poster from './Poster'
 import { getBackdropUrl } from '../api'
 
 export default Blits.Component('CardRow', {
-  props: ['movies'],
+  props: ['movies', 'type', 'itemSpacing'],
   components: {
     Card,
+    Poster,
   },
   template: `
     <Element :x.transition="$x" h="600" ref="row"
-      ><Card
+      ><Component
+        is="$type.type"
         :for="(item, index) in $movies"
         :range="{from: $range, to: $range + 6}"
-        :x="$index * 360"
+        :x="$index * $type.width+($index+1)*$itemSpacing"
+        :w="$type.width"
+        :h="$type.height"
         :src="$item.backdrop_path"
         :text="$item.original_title"
         ref="card"
@@ -40,19 +45,20 @@ export default Blits.Component('CardRow', {
   },
   input: {
     left() {
-      this.focused = Math.max(this.focused - 1, 0)
-      this.range = this.focused
+      this.range = Math.max(this.focused - 1, 0)
+      this.focused = this.range
       this.scroll()
     },
     right() {
-      this.focused = Math.min(this.focused + 1, this.movies.length - 1)
-      this.range = this.focused
+      this.range = Math.min(this.focused + 1, this.movies.length - 1)
+      this.focused = this.range
       this.scroll()
     },
   },
   methods: {
     scroll() {
-      this.x = -this.focused * 360
+      this.x = -this.focused * (this.itemSpacing + this.type.width)
+      console.log(this.x)
     },
     getBackdropUrl(backdropPath) {
       getBackdropUrl(backdropPath)

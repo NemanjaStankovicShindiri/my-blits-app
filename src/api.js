@@ -1,3 +1,5 @@
+import { CARD_TYPE } from './utils/cardWidth'
+
 const API_KEY = 'c1e672f11dd715c09878f04137c94ba1'
 const BASE_URL = 'https://api.themoviedb.org/3'
 const TMDB_IMAGE_BASE = 'https://image.tmdb.org/t/p'
@@ -9,18 +11,22 @@ export async function fetchTMDBData() {
       {
         name: 'Popular Movies',
         url: `${BASE_URL}/movie/popular?api_key=${API_KEY}&language=en-US&page=1`,
+        type: CARD_TYPE.POSTER,
       },
       {
         name: 'Trending Movies',
         url: `${BASE_URL}/trending/movie/week?api_key=${API_KEY}`,
+        type: CARD_TYPE.POSTER,
       },
       {
         name: 'Top Rated Movies',
         url: `${BASE_URL}/movie/top_rated?api_key=${API_KEY}&language=en-US&page=1`,
+        type: CARD_TYPE.CARD,
       },
       {
         name: 'Upcoming Movies',
         url: `${BASE_URL}/movie/upcoming?api_key=${API_KEY}&language=en-US&page=1`,
+        type: CARD_TYPE.POSTER,
       },
     ]
 
@@ -32,6 +38,7 @@ export async function fetchTMDBData() {
         return {
           name: endpoint.name,
           movies: data.results || [],
+          type: endpoint.type,
         }
       })
     )
