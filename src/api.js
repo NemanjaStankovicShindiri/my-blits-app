@@ -16,17 +16,17 @@ export async function fetchTMDBData() {
       {
         name: 'Trending Movies',
         url: `${BASE_URL}/trending/movie/week?api_key=${API_KEY}`,
-        type: CARD_TYPE.POSTER,
+        type: { type: 'Card', width: 200, height: 600 },
       },
       {
         name: 'Top Rated Movies',
         url: `${BASE_URL}/movie/top_rated?api_key=${API_KEY}&language=en-US&page=1`,
-        type: CARD_TYPE.CARD,
+        type: { type: 'Card', width: 640, height: 360, itemOffset: 50 },
       },
       {
         name: 'Upcoming Movies',
         url: `${BASE_URL}/movie/upcoming?api_key=${API_KEY}&language=en-US&page=1`,
-        type: CARD_TYPE.CARD,
+        type: { type: 'Card', width: 200, height: 100 },
       },
     ]
 
@@ -50,6 +50,5 @@ export async function fetchTMDBData() {
   }
 }
 export function getBackdropUrl(backdropPath, size = 'w1280') {
-  if (!backdropPath) return ''
   return `${TMDB_IMAGE_BASE}/${size}${backdropPath}?api_key=${API_KEY}`
 }

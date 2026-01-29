@@ -17,17 +17,16 @@
 
 import Blits from '@lightningjs/blits'
 import Card from './Card'
-import Poster from './Poster'
 
 export default Blits.Component('List', {
-  components: { Card, Poster },
+  components: { Card },
   template: `
     <Element :x.transition="$x">
       <Component
         is="$type.type"
         :for="(item, index) in $items"
         :item="$item"
-        :src="$item.backdrop_path"
+        :src="$item.backdrop_path || ''"
         :x="$index * $totalWidth"
         :ref="'list-item-'+$item.id"
         :key="$item.id"

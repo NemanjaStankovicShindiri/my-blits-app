@@ -1,30 +1,31 @@
 import Blits from '@lightningjs/blits'
 import { getBackdropUrl } from '../api'
+import { FocusBorder } from './FocusBorder'
+import fallback from '../../public/assets/red.png'
 
 export default Blits.Component('Card', {
-  props: ['src', 'text'],
+  props: ['src', 'text', 'width', 'height', 'key'],
+  components: { FocusBorder },
   template: `
-    <Element
-      w="100%"
-      h="100%"
-      :scale="$hasFocus?1.1:1"
-      :effects="[{type: 'radius', props: {radius: 20}}, {type: 'border', props: {width: 6, color: '#EFEFEF'}}]"
-      ><Element
-        w="100%"
-        h="100%"
+    <Element w="$width" h="$height" :scale="$hasFocus?1.1:1">
+      <FocusBorder width="$width + 6" height="$height + 6" bWidth="6" :alpha="$hasFocus ? 1 : 0" />
+      <Element
+        w="$width"
+        h="$height"
+        :effects="[{type: 'radius', props: {radius: 5}}]"
         src="$backdrop"
+        fit="{ type:
+      'cover', position: { x: 0.5 } }"
         @loaded="$revealPage"
         @error="$showFallback"
-        padding="{x: 200, top: 30, bottom: 10}"
-      />
-    </Element>`,
+    /></Element>`,
   state() {
     return { backdrop: '' }
   },
   hooks: {
     //Lifecycle events
     init() {
-      this.backdrop = getBackdropUrl(this.src)
+      this.backdrop = this.src ? getBackdropUrl(this.src) : fallback
       // before it sends its render instructions to the Lightning renderer
     },
     destroy() {},
@@ -45,6 +46,11 @@ export default Blits.Component('Card', {
       this.$emit('changeBackground', { img: this.backdrop })
     },
   },
+  input: {
+    enter() {
+      this.$router.to(`/details/${this.key}`, { inHistory: false })
+    },
+  },
   methods: {
     revealPage(dimensions) {
       this.$log.info('Image dimensions', dimensions.w, dimensions.h)
@@ -56,16 +62,3 @@ export default Blits.Component('Card', {
     },
   },
 })
-
-//<Text
-//       :alpha="$hasFocus?1: 0.6"
-//     w="100%"
-//   h="43"
-// y="210"
-//size="24"
-//content="$text"
-//color="rgba(241, 241, 241, 1)"
-//maxlines="1"
-//contain="width"
-//font="InterRegular"
-///>

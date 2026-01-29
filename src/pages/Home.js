@@ -5,7 +5,7 @@
 import Blits from '@lightningjs/blits'
 
 import Column from '../components/Column.js'
-import { fetchTMDBData } from '../api.js'
+import { getMovies } from '../api/services/MediaServices.js'
 
 export default Blits.Component('Home', {
   components: {
@@ -17,6 +17,8 @@ export default Blits.Component('Home', {
         :items="$items"
         rowSpacing="30"
         ref="content"
+        autoScroll="true"
+        looping="true"
       />
     </Element>
   `,
@@ -31,10 +33,10 @@ export default Blits.Component('Home', {
   },
   hooks: {
     ready() {
-      this.fetchData()
       const content = this.$select('content')?.$focus()
     },
     init() {
+      this.fetchData()
       this.$listen('changeBackground', ({ img }) => {
         if (this.backgroundDebounce) {
           this.$clearTimeout(this.backgroundDebounce)
@@ -51,7 +53,7 @@ export default Blits.Component('Home', {
       console.log('left released')
     },
     async fetchData() {
-      const data = await fetchTMDBData()
+      const data = await getMovies(false)
       this.items = data
     },
   },
