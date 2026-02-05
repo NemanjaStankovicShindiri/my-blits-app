@@ -1,3 +1,4 @@
+import HorizontalContainer from '../../components/HorizontalContainer'
 import tmdbApi from '../tmdbInstance'
 
 export async function getMovieDetails(id) {
@@ -19,12 +20,42 @@ export async function getSimilarMovies5Pages(id) {
       )
     }
 
+    requests.push(tmdbApi.get(`/movie/${id}/credits`))
+
     const responses = await Promise.all(requests)
-    const res = responses.map((item, index) => ({
-      name: railNames[index],
-      movies: item.data.results,
-      type: { type: 'Card', width: 360, height: 216 },
-    }))
+    const res = responses.slice(0, 3).map((item, index) => {
+      return {
+        title: railNames[index],
+        type: 'HorizontalContainer',
+        rowH: 216,
+        items: item.data.results.map((singleMovie) => {
+          return {
+            data: singleMovie,
+            type: 'Card',
+            width: 330,
+            height: 198,
+          }
+        }),
+      }
+    })
+    const resCast = {
+      title: 'Tuljani',
+      rowH: 216,
+      type: 'HorizontalContainer',
+      items: responses[3].data.cast.slice(0, 5).map((item) => {
+        return {
+          data: { backdrop_path: item.profile_path },
+          id: item.id,
+          text: item.name,
+          subText: item.character,
+          type: 'Card',
+          width: 170,
+          height: 170,
+          radius: 100,
+        }
+      }),
+    }
+    res.push(resCast)
     return res
   } catch (error) {
     console.error('Error fetching similar movies (5 pages):', error)

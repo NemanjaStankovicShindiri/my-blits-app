@@ -6,14 +6,15 @@ import Blits from '@lightningjs/blits'
 
 import Column from '../components/Column.js'
 import { getMovies } from '../api/services/MediaServices.js'
+import VerticalContainer from '../components/VerticalContainer.js'
 
 export default Blits.Component('Home', {
   components: {
-    Column,
+    VerticalContainer,
   },
   template: `
     <Element w="1920" h="1080" :src="$src"
-      ><Element w="1920" h="1080" color="{top: '#000000ff', left: '#000000ff'}" alpha="0.6" /><Column
+      ><Element w="1920" h="1080" color="{top: '#000000ff', left: '#000000ff'}" alpha="0.6" /><VerticalContainer
         :items="$items"
         rowSpacing="30"
         ref="content"
@@ -32,11 +33,9 @@ export default Blits.Component('Home', {
     }
   },
   hooks: {
-    ready() {
-      const content = this.$select('content')?.$focus()
-    },
-    init() {
-      this.fetchData()
+    async init() {
+      await this.fetchData()
+      this.$select('content')?.$focus()
       this.$listen('changeBackground', ({ img }) => {
         if (this.backgroundDebounce) {
           this.$clearTimeout(this.backgroundDebounce)
@@ -47,6 +46,7 @@ export default Blits.Component('Home', {
         }, 1000)
       })
     },
+    ready() {},
   },
   methods: {
     leftKeyUp() {

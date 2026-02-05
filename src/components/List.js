@@ -17,21 +17,19 @@
 
 import Blits from '@lightningjs/blits'
 import Card from './Card'
+import Button from './Button'
 
 export default Blits.Component('List', {
-  components: { Card },
+  components: { Card, Button },
   template: `
     <Element :x.transition="$x">
       <Component
-        is="$type.type"
         :for="(item, index) in $items"
+        is="$item.type"
         :item="$item"
-        :src="$item.backdrop_path || ''"
         :x="$index * $totalWidth"
-        :ref="'list-item-'+$item.id"
-        :key="$item.id"
-        width="$itemWidth"
-        height="$itemHeight"
+        :ref="'list-item-'+$item.data.id"
+        :key="$item.data.id"
       />
     </Element>
   `,
@@ -43,17 +41,24 @@ export default Blits.Component('List', {
     'itemWidth',
     'items',
     'looping',
-    'type',
+    'containerWidth',
   ],
   state() {
     return {
       focused: 0,
       x: 0,
+      borderWidth: 0,
     }
   },
   computed: {
     totalWidth() {
-      return (this.itemWidth || 300) + (this.itemOffset || 0)
+      return (this.items[0].width || 300) + (this.itemOffset || 0)
+    },
+  },
+  hooks: {
+    focus() {
+      this.$trigger('focused')
+      this.$select(`list-item-${this.items[this.focused].data.id}`)?.$focus()
     },
   },
   watch: {
@@ -61,10 +66,10 @@ export default Blits.Component('List', {
       if (isFocused) this.$trigger('focused')
     },
     focused(value) {
-      const focusItem = this.$select(`list-item-${this.items[value].id}`)
+      const focusItem = this.$select(`list-item-${this.items[value].data.id}`)
       if (focusItem && focusItem.$focus) {
         focusItem.$focus()
-        this.scrollToFocus(value)
+        this.scrollToFocus()
       }
     },
   },
@@ -75,10 +80,19 @@ export default Blits.Component('List', {
         : Math.max(0, Math.min(this.focused + direction, this.items.length - 1))
       this.focused = nextFocus
     },
-    scrollToFocus(index) {
+    scrollToFocus() {
       if (this.autoScroll) {
-        const maxScrollIndex = Math.max(0, this.items.length - (this.autoscrollOffset || 0))
-        this.x = -(index <= maxScrollIndex ? index : maxScrollIndex) * this.totalWidth
+        this.x =
+          0 -
+          (this.items.length - 1770 / (this.items[0].width + this.itemOffset) < 0
+            ? 0
+            : Math.min(
+                this.focused,
+                this.items.length - 1770 / (this.items[0].width + this.itemOffset)
+              ) *
+              (this.items[0].width + this.itemOffset))
+        // const maxScrollIndex = Math.max(0, this.items.length - (this.autoscrollOffset || 0))
+        // this.x = -(index <= maxScrollIndex ? index : maxScrollIndex) * this.totalWidth
       }
     },
   },

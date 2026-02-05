@@ -3,24 +3,54 @@ export async function getMovies(slice = false) {
   try {
     const endpoints = [
       {
-        name: 'Popular Movies',
+        title: 'Popular Movies',
         path: '/movie/popular',
-        type: { type: 'Card', width: 200, height: 300 },
+        type: 'HorizontalContainer',
+        width: 200,
+        height: 200,
+        rowH: 200,
+        onEnter: (id) => {
+          return `/details/${id}`
+        },
+
+        wBorder: true,
       },
       {
-        name: 'Trending Movies',
+        title: 'Trending Movies',
         path: '/trending/movie/week',
-        type: { type: 'Card', width: 200, height: 600 },
+        type: 'HorizontalContainer',
+        width: 200,
+        height: 600,
+        onEnter: (id) => {
+          return `/details/${id}`
+        },
+        rowH: 600,
+        wBorder: false,
       },
       {
-        name: 'Top Rated Movies',
+        title: 'Top Rated Movies',
         path: '/movie/top_rated',
-        type: { type: 'Card', width: 640, height: 360, itemOffset: 50 },
+        type: 'HorizontalContainer',
+        width: 640,
+        height: 360,
+        itemOffset: 50,
+        onEnter: (id) => {
+          return `/details/${id}`
+        },
+        rowH: 360,
+        wBorder: false,
       },
       {
-        name: 'Upcoming Movies',
+        title: 'Upcoming Movies',
         path: '/movie/upcoming',
-        type: { type: 'Card', width: 200, height: 100 },
+        type: 'HorizontalContainer',
+        width: 200,
+        height: 100,
+        onEnter: (id) => {
+          return `/details/${id}`
+        },
+        wBorder: false,
+        rowH: 100,
       },
     ]
 
@@ -30,22 +60,29 @@ export async function getMovies(slice = false) {
 
         const movies = (slice ? response.data.results.slice(0, 5) : response.data.results).map(
           (item) => ({
-            title: item.title,
-            poster_path: item.poster_path,
-            overview: item.overview,
-            backdrop_path: item.backdrop_path,
-            id: item.id,
+            type: 'Card',
+            width: endpoint.width,
+            height: endpoint.height,
+            data: {
+              title: item.title,
+              poster_path: item.poster_path,
+              overview: item.overview,
+              backdrop_path: item.backdrop_path,
+              id: item.id,
+            },
           })
         )
 
         return {
-          name: endpoint.name,
-          movies,
+          title: endpoint.title,
+          items: movies,
           type: endpoint.type,
+          rowH: endpoint.rowH,
+          wBorder: endpoint.wBorder,
         }
       })
     )
-
+    console.log(results)
     return results
   } catch (error) {
     console.error('Error fetching movie sections:', error)

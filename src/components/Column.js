@@ -1,23 +1,25 @@
 import Blits from '@lightningjs/blits'
 import List from './List'
+import HorizontalContainer from './HorizontalContainer'
 
 export default Blits.Component('Column', {
-  props: ['items', 'rowSpacing', 'autoScroll', 'looping'],
-  components: { List },
+  props: ['items', 'itemOffset', 'autoScroll', 'looping'],
+  components: { List, HorizontalContainer },
   template: `
     <Element w="1920" :y.transition="$y" ref="columnCont"
       ><Element :for="(item, index) in $items" x="64" :y="$rowY($index)">
         <Text w="103" h="29" :content="$item.name" font="InterBold" size="24" letterspacing="6" />
-        <Element w="100%" :h="$item.type.height" y="39" overflow="true" ref="backgroundEl"
-          ><List
+        <Element w="100%" :h="$item.height" y="39" overflow="true" ref="backgroundEl"
+          ><HorizontalContainer
             :items="$item.movies"
             :type="$item.type"
-            :itemWidth="$item.type.width"
-            :itemHeight="$item.type.height"
+            :itemWidth="$item.width"
+            :itemHeight="$item.height"
             :ref="'cardRow'+$index"
             autoScroll="true"
             looping="true"
-            :itemOffset="$item.type.itemOffset || 30"
+            :itemOffset="$item.itemOffset || 30"
+            :wBorder="$item.wBorder"
         /></Element> </Element
     ></Element>`,
   state() {
@@ -27,8 +29,8 @@ export default Blits.Component('Column', {
     }
   },
   hooks: {
-    ready() {
-      console.log(this.items)
+    async init() {
+      this.$trigger('focused')
     },
     focus() {
       this.$trigger('focused')
@@ -36,12 +38,10 @@ export default Blits.Component('Column', {
   },
   watch: {
     focused(value) {
-      setTimeout(() => {
-        const focusedItem = this.$select('cardRow' + value)
-        if (focusedItem && focusedItem.$focus) {
-          focusedItem.$focus()
-        }
-      }, 100)
+      const focusedItem = this.$select('cardRow' + value)
+      if (focusedItem && focusedItem.$focus) {
+        focusedItem.$focus()
+      }
     },
   },
   input: {
@@ -66,7 +66,7 @@ export default Blits.Component('Column', {
         ? 0
         : this.items
             .slice(0, index)
-            .reduce((sum, i) => sum + 29 + 24 + i.type.height + this.rowSpacing, 0)
+            .reduce((sum, i) => sum + 29 + 24 + i.height + this.itemOffset, 0)
     },
     scroll() {
       if (this.autoScroll) {
@@ -75,7 +75,7 @@ export default Blits.Component('Column', {
             ? 0
             : -this.items
                 .slice(0, this.focused)
-                .reduce((sum, i) => sum + 29 + 24 + i.type.height + this.rowSpacing, 0)
+                .reduce((sum, i) => sum + 29 + 24 + i.type.height + this.itemOffset, 0)
       }
     },
   },

@@ -34,5 +34,7 @@ Blits.Launch(App, 'app', {
       type: 'msdf',
       file: 'fonts/Inter_24pt-SemiBold.ttf',
     },
+    { family: 'PoppinsSemiBold', type: 'msdf', file: 'fonts/Poppins-SemiBold.ttf' },
+    { family: 'AntonRegular', type: 'msdf', file: 'fonts/Anton-Regular.ttf' },
   ],
 })

@@ -7,8 +7,10 @@ export const FocusBorder = Blits.Component('FocusBorder', {
       :x="$calc"
       w="$width"
       h="$height"
-      :effects="[{type: 'radius', props: {radius: 6}}, {type: 'border', props:{width:
-    $bWidth, color: '#ED51F0'}}]"
+      :effects="[
+    { type: 'radius', props: { radius: $radius } },
+    { type: 'border', props: { width: $bWidth, color: '#FFFFFF' } }
+      ]"
     />
   `,
   props: [
@@ -19,6 +21,10 @@ export const FocusBorder = Blits.Component('FocusBorder', {
     {
       key: 'bWidth',
       default: 8,
+    },
+    {
+      key: 'radius',
+      default: 6,
     },
   ],
   computed: {

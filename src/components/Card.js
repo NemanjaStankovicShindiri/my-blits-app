@@ -4,43 +4,63 @@ import { FocusBorder } from './FocusBorder'
 import fallback from '../../public/assets/red.png'
 
 export default Blits.Component('Card', {
-  props: ['src', 'text', 'width', 'height', 'key'],
+  props: ['key', 'items'],
   components: { FocusBorder },
   template: `
-    <Element w="$width" h="$height" :scale="$hasFocus?1.1:1">
-      <FocusBorder width="$width + 6" height="$height + 6" bWidth="6" :alpha="$hasFocus ? 1 : 0" />
+    <Layout w="$items.width" h="$items.height" direction="vertical" :scale="$hasFocus?1.1:1">
+      <FocusBorder
+        width="$items.width + 6"
+        height="$items.height + 6"
+        bWidth="6"
+        :alpha="$hasFocus ? 1 : 0"
+        :radius="$items.radius || 5" />
       <Element
-        w="$width"
-        h="$height"
-        :effects="[{type: 'radius', props: {radius: 5}}]"
+        w="$items.width"
+        h="$items.height"
+        :effects="[{type: 'radius', props: { radius: $items.radius }
+    }]"
         src="$backdrop"
-        fit="{ type:
-      'cover', position: { x: 0.5 } }"
+        fit="{
+      type: 'cover', position: { x: 0.5 } }"
         @loaded="$revealPage"
-        @error="$showFallback"
-    /></Element>`,
+        @error="$showFallback" /><Text
+        content="$items.text"
+        y="$items.height"
+        width="$items.width"
+        align="center"
+        textoverflow="true"
+        maxlines="1"
+        contain="width"
+        size="16"
+        color="#ffffff"
+        font="PoppinsSemiBold" /><Text
+        content="$items.subText"
+        y="$items.height"
+        width="$items.width"
+        align="center"
+        textoverflow="true"
+        maxlines="1"
+        contain="width"
+        size="16"
+        color="#909090"
+        font="PoppinsSemiBold"
+    /></Layout>`,
   state() {
     return { backdrop: '' }
   },
   hooks: {
     //Lifecycle events
     init() {
-      this.backdrop = this.src ? getBackdropUrl(this.src) : fallback
+      console.log(this.items)
+      this.backdrop = this.items.data.backdrop_path
+        ? getBackdropUrl(this.items.data.backdrop_path) ||
+          getBackdropUrl(this.items.data.poster_path)
+        : fallback
       // before it sends its render instructions to the Lightning renderer
-    },
-    destroy() {},
-    ready() {
-      //component instance is fully initialized and rendered
     },
     //Renderer events
     idle() {
       // Triggers when components is finally rendered and doesnt change. If it never triggers it means component rerenders constantly
-    },
-    frameTick(data) {
-      //   console.log(data.time, data.delta)
-    },
-    fpsUpdate(fps) {
-      //console.log('Current FPS', fps)     //shows fps every second by default
     },
     focus() {
       this.$emit('changeBackground', { img: this.backdrop })
@@ -48,16 +68,16 @@ export default Blits.Component('Card', {
   },
   input: {
     enter() {
-      this.$router.to(`/details/${this.key}`, { inHistory: false })
+      // this.$router.to(this.type.onEnter(this.key), { inHistory: false })
     },
   },
   methods: {
     revealPage(dimensions) {
-      this.$log.info('Image dimensions', dimensions.w, dimensions.h)
+      // this.$log.info('Image dimensions', dimensions.w, dimensions.h)
       this.show = true
     },
     showFallback(error) {
-      this.$log.error('Image failed to load', error)
+      // this.$log.error('Image failed to load', error)
       this.showBackupImage()
     },
   },
