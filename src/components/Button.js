@@ -8,7 +8,7 @@ export default Blits.Component('Button', {
       padding="16"
       :effects="[{type: 'radius', props: {radius: 25}}]"
     >
-      <Text content="Season 12323" />
+      <Text content="Season 213123132213" />
     </Layout>`,
   hooks: {
     focus() {

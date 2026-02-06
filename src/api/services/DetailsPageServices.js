@@ -34,6 +34,9 @@ export async function getSimilarMovies5Pages(id) {
             type: 'Card',
             width: 330,
             height: 198,
+            onEnter: (id) => {
+              return `/details/${id}`
+            },
           }
         }),
       }
@@ -49,6 +52,9 @@ export async function getSimilarMovies5Pages(id) {
           text: item.name,
           subText: item.character,
           type: 'Card',
+          onEnter: (id) => {
+            return `/person/${id}`
+          },
           width: 170,
           height: 170,
           radius: 100,

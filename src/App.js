@@ -14,6 +14,7 @@ export default Blits.Application({
     {
       path: '/details/:id',
       component: Details,
+      options: { keepAlive: true },
     },
   ],
 })

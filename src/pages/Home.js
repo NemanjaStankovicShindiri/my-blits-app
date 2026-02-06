@@ -15,6 +15,7 @@ export default Blits.Component('Home', {
   template: `
     <Element w="1920" h="1080" :src="$src"
       ><Element w="1920" h="1080" color="{top: '#000000ff', left: '#000000ff'}" alpha="0.6" /><VerticalContainer
+        x="96"
         :items="$items"
         rowSpacing="30"
         ref="content"

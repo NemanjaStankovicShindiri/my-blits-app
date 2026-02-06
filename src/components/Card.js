@@ -13,7 +13,7 @@ export default Blits.Component('Card', {
         height="$items.height + 6"
         bWidth="6"
         :alpha="$hasFocus ? 1 : 0"
-        :radius="$items.radius || 5" />
+        :radius="$items.radius" />
       <Element
         w="$items.width"
         h="$items.height"
@@ -46,15 +46,14 @@ export default Blits.Component('Card', {
         font="PoppinsSemiBold"
     /></Layout>`,
   state() {
-    return { backdrop: '' }
+    return { backdrop: fallback }
   },
   hooks: {
     //Lifecycle events
     init() {
-      console.log(this.items)
       this.backdrop = this.items.data.backdrop_path
-        ? getBackdropUrl(this.items.data.backdrop_path) ||
-          getBackdropUrl(this.items.data.poster_path)
+        ? getBackdropUrl(this.items.data.backdrop_path, 'w300') ||
+          getBackdropUrl(this.items.data.poster_path, 'w300')
         : fallback
       // before it sends its render instructions to the Lightning renderer
     },
@@ -68,7 +67,10 @@ export default Blits.Component('Card', {
   },
   input: {
     enter() {
-      // this.$router.to(this.type.onEnter(this.key), { inHistory: false })
+      console.log('onEnter', this.items.onEnter)
+      this.$router.to(this.items.onEnter(this.items.data.id), {
+        inHistory: false,
+      })
     },
   },
   methods: {

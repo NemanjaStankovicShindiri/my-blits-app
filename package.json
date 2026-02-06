@@ -8,7 +8,7 @@
     "start": "npm run dev",
     "lint": "eslint '**/*.js'",
     "lint:fix": "eslint '**/*.js' --fix",
-    "build": "vite build",
+    "build": "vite build --sourcemap=false --base=./ --outDir lg --emptyOutDir false && ares-package lg --outdir lg --no-minify",
     "dev": "vite dev --host",
     "postinstall": "husky"
   },

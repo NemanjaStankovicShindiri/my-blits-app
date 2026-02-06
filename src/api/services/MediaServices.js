@@ -60,6 +60,9 @@ export async function getMovies(slice = false) {
 
         const movies = (slice ? response.data.results.slice(0, 5) : response.data.results).map(
           (item) => ({
+            onEnter: (id) => {
+              return `/details/${id}`
+            },
             type: 'Card',
             width: endpoint.width,
             height: endpoint.height,

@@ -10,6 +10,7 @@ export default Blits.Component('HorizontalContainer', {
       <Text content="$title" color="#FFF" h="50" />
       <Component
         :for="(item, index) in $items"
+        :range="{from: $rangeFrom, to: $rangeTo}"
         is="$item.type"
         :x="$rowX($index)"
         :y="$title ? 50 : 0"
@@ -36,6 +37,8 @@ export default Blits.Component('HorizontalContainer', {
     return {
       focused: 0,
       x: 0,
+      rangeFrom: 0,
+      rangeTo: 5,
     }
   },
   hooks: {
@@ -53,6 +56,27 @@ export default Blits.Component('HorizontalContainer', {
         focusItem.$focus()
         this.scroll()
       }
+      console.log('Scroll from index ', Math.min(-1, this.lastIndexToScroll - 1 - this.focused))
+      this.rangeTo = Math.min(this.items.length, value + 6)
+    },
+  },
+  computed: {
+    rangeStart() {
+      console.log('Previous ', this.focused - 1)
+      return this.focused - 1
+    },
+    rangeEnd() {
+      console.log('Next', this.focused + 1)
+      return this.focused + 5
+    },
+    itemTotalWidth() {
+      return this.items[0].width + this.gap
+    },
+    visibleCount() {
+      return 1770 / this.itemTotalWidth
+    },
+    lastIndexToScroll() {
+      return this.items.length - this.visibleCount
     },
   },
   methods: {
@@ -79,10 +103,9 @@ export default Blits.Component('HorizontalContainer', {
         // this.x = -this.rowOffset(this.focused)  //stara logika
         this.x =
           0 -
-          (this.items.length - 1770 / (this.items[0].width + this.gap) < 0
+          (this.lastIndexToScroll < 0
             ? 0
-            : Math.min(this.focused, this.items.length - 1770 / (this.items[0].width + this.gap)) *
-              (this.items[0].width + this.gap))
+            : Math.min(this.focused, this.lastIndexToScroll) * this.itemTotalWidth)
       }
       console.log(this.x)
     },

@@ -1,0 +1,13 @@
+{
+  "id": "red",
+  "version": "1.0.0",
+  "vendor": "3SS",
+  "type": "web",
+  "main": "index.html",
+  "title": "3SS players",
+  "icon": "icon.png",
+  "largeIcon": "icon.png",
+  "iconColor": "#DF0000",
+  "resolution": "1920x1080",
+  "disableBackHistoryAPI": true
+}
