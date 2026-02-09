@@ -93,7 +93,7 @@ export default Blits.Component('Detail', {
         .filter((item) => item.logo_path)
         .map((item) => getBackdropUrl(item.logo_path, 'w300'))
       this.genres = this.data.genres.map((item) => item.name).sort()
-      this.backdrop = getBackdropUrl(this.data?.backdrop_path)
+      this.backdrop = getBackdropUrl(this.data?.backdrop_path, 'w1280')
       this.similar = await getSimilarMovies5Pages(this.id)
       this.$select('content').$focus()
     },

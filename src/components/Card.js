@@ -81,7 +81,6 @@ export default Blits.Component('Card', {
   },
   input: {
     enter() {
-      console.log('onEnter', this.items.onEnter)
       this.$router.to(this.items.onEnter(this.items.data.id), {
         inHistory: false,
       })
@@ -94,7 +93,7 @@ export default Blits.Component('Card', {
     },
     showFallback(error) {
       // this.$log.error('Image failed to load', error)
-      this.showBackupImage()
+      // this.showBackupImage()
     },
   },
 })

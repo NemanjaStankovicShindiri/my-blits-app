@@ -41,11 +41,6 @@ export default Blits.Component('HorizontalContainer', {
       rangeTo: this.visibleCount,
     }
   },
-  hooks: {
-    init() {
-      console.log('Visible count', this.visibleCount)
-    },
-  },
   watch: {
     hasFocus(isFocused) {
       if (isFocused) this.$trigger('focused')
@@ -99,7 +94,6 @@ export default Blits.Component('HorizontalContainer', {
             ? 0
             : Math.min(this.focused, this.lastIndexToScroll) * this.itemTotalWidth)
       }
-      console.log(this.x)
     },
   },
   input: {
@@ -108,9 +102,6 @@ export default Blits.Component('HorizontalContainer', {
     },
     right() {
       this.changeFocus(1)
-    },
-    enter() {
-      console.log('Selected item:', this.items[this.focused])
     },
   },
 })
