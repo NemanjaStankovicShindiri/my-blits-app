@@ -38,12 +38,12 @@ export default Blits.Component('HorizontalContainer', {
       focused: 0,
       x: 0,
       rangeFrom: 0,
-      rangeTo: 5,
+      rangeTo: this.visibleCount,
     }
   },
   hooks: {
     init() {
-      console.log(this.items)
+      console.log('Visible count', this.visibleCount)
     },
   },
   watch: {
@@ -56,19 +56,11 @@ export default Blits.Component('HorizontalContainer', {
         focusItem.$focus()
         this.scroll()
       }
-      console.log('Scroll from index ', Math.min(-1, this.lastIndexToScroll - 1 - this.focused))
-      this.rangeTo = Math.min(this.items.length, value + 6)
+      this.rangeFrom = this.focused + Math.min(-1, this.lastIndexToScroll - 1 - this.focused)
+      this.rangeTo = this.focused + this.visibleCount
     },
   },
   computed: {
-    rangeStart() {
-      console.log('Previous ', this.focused - 1)
-      return this.focused - 1
-    },
-    rangeEnd() {
-      console.log('Next', this.focused + 1)
-      return this.focused + 5
-    },
     itemTotalWidth() {
       return this.items[0].width + this.gap
     },

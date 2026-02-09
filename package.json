@@ -9,6 +9,8 @@
     "lint": "eslint '**/*.js'",
     "lint:fix": "eslint '**/*.js' --fix",
     "build": "vite build --sourcemap=false --base=./ --outDir lg --emptyOutDir false && ares-package lg --outdir lg --no-minify",
+    "build:chrome38": "npm --browser_version=chrome38-48 run build",
+    "build:chrome57": "npm --browser_version=chrome57-62 run build",
     "dev": "vite dev --host",
     "postinstall": "husky"
   },
@@ -22,10 +24,11 @@
     "husky": "^9.1.6",
     "lint-staged": "^15.2.10",
     "prettier": "^3.3.3",
-    "vite": "^5.4.8"
+    "vite": "^6.4.1"
   },
   "dependencies": {
     "@lightningjs/blits": "^1.45.2",
+    "@vitejs/plugin-legacy": "^6.1.1",
     "axios": "^1.13.4"
   },
   "lint-staged": {

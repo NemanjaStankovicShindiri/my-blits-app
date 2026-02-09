@@ -14,16 +14,31 @@ export default Blits.Component('Card', {
         bWidth="6"
         :alpha="$hasFocus ? 1 : 0"
         :radius="$items.radius" />
-      <Element
-        w="$items.width"
-        h="$items.height"
-        :effects="[{type: 'radius', props: { radius: $items.radius }
-    }]"
-        src="$backdrop"
-        fit="{
+      <Element w="$items.width" h="$items.height">
+        <Element
+          w="$items.width - 2"
+          h="$items.height - 2"
+          x="1"
+          y="1"
+          :effects="[{type: 'radius', props: { radius: $items.radius }}]"
+          :src="'assets/red.png'"
+          color="grey"
+          fit="{
       type: 'cover', position: { x: 0.5 } }"
-        @loaded="$revealPage"
-        @error="$showFallback" /><Text
+        />
+        <Element
+          w="$items.width"
+          h="$items.height"
+          :effects="[{type: 'radius', props: { radius: $items.radius }}]"
+          src="$backdrop"
+          fit="{
+      type: 'cover', position: { x: 0.5 } }"
+          @loaded="$revealPage"
+          @error="$showFallback"
+        />
+      </Element>
+    
+      <Text
         content="$items.text"
         y="$items.height"
         width="$items.width"
@@ -52,9 +67,8 @@ export default Blits.Component('Card', {
     //Lifecycle events
     init() {
       this.backdrop = this.items.data.backdrop_path
-        ? getBackdropUrl(this.items.data.backdrop_path, 'w300') ||
-          getBackdropUrl(this.items.data.poster_path, 'w300')
-        : fallback
+        ? getBackdropUrl(this.items.data.backdrop_path, 'w300')
+        : getBackdropUrl(this.items.data.poster_path, 'w300')
       // before it sends its render instructions to the Lightning renderer
     },
     //Renderer events
