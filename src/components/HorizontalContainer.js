@@ -53,7 +53,7 @@ export default Blits.Component('HorizontalContainer', {
   state() {
     return {
       focused: 0,
-      x: 0,
+      x: this.padding,
       rangeFrom: 0,
       rangeTo: this.visibleCount,
     }
@@ -109,7 +109,9 @@ export default Blits.Component('HorizontalContainer', {
         this.x =
           this.padding -
           (this.lastIndexToScroll < 0
-            ? this.padding
+            ? !this.containerBorder
+              ? 0
+              : this.padding
             : Math.min(this.focused, this.lastIndexToScroll) * this.itemTotalWidth)
       }
     },
