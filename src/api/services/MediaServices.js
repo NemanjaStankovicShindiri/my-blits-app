@@ -85,7 +85,6 @@ export async function getMovies(slice = false) {
         }
       })
     )
-    console.log(results)
     return results
   } catch (error) {
     console.error('Error fetching movie sections:', error)

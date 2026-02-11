@@ -1,9 +1,10 @@
 // @ts-nocheck
 import Blits from '@lightningjs/blits'
 import HorizontalContainer from './HorizontalContainer'
+import NavbarRow from './NavbarRow'
 
 export default Blits.Component('VerticalContainer', {
-  components: { HorizontalContainer },
+  components: { HorizontalContainer, NavbarRow },
   template: `
     <Element :y.transition="$y">
       <Component
@@ -14,6 +15,9 @@ export default Blits.Component('VerticalContainer', {
         :key="$index"
         :items="$item.items ? $item.items : $item"
         title="$item.title"
+        :containerWidth="$item.containerWidth || 1770"
+        containerBorder="$item.containerBorder"
+        :gap="$item.gap || 50"
         autoScroll="true"
       />
     </Element>
@@ -76,9 +80,6 @@ export default Blits.Component('VerticalContainer', {
     },
     down() {
       this.changeFocus(1)
-    },
-    enter() {
-      console.log('Selected item:', this.items[this.focused])
     },
   },
 })

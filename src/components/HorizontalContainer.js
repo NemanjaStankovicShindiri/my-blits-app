@@ -2,23 +2,37 @@
 import Blits from '@lightningjs/blits'
 import Card from './Card'
 import Button from './Button'
+import DetailsButton from './DetailsButton'
 
 export default Blits.Component('HorizontalContainer', {
-  components: { Card, Button },
+  components: { Card, Button, DetailsButton },
   template: `
-    <Element :x.transition="$x" ref="container">
+    <Element>
       <Text content="$title" color="#FFF" h="50" />
-      <Component
-        :for="(item, index) in $items"
-        :range="{from: $rangeFrom, to: $rangeTo}"
-        is="$item.type"
-        :x="$rowX($index)"
+      <Element
+        :width="$containerWidth+2*$padding"
+        :height="$items[0].height+2*$padding"
         :y="$title ? 50 : 0"
-        :ref="'list-item-'+$index"
-        :key="$index"
-        :items="$item.items ? $item.items : $item"
-        autoScroll="true"
-      />
+        :clipping="$containerBorder"
+        :effects="$containerBorder
+      ? [
+      { type: 'radius', props: { radius: 50 } },
+      { type: 'border', props: { width: 2, color: '#FFFFFF' } }
+    ]
+      : []"
+      >
+        <Element :x.transition="$x" ref="container" y="8">
+          <Component
+            :for="(item, index) in $items"
+            :range="{from: $rangeFrom, to: $rangeTo}"
+            is="$item.type"
+            :x="$rowX($index)"
+            :ref="'list-item-'+$index"
+            :key="$index"
+            :items="$item.items ? $item.items : $item"
+            autoScroll="true"
+        /></Element>
+      </Element>
     </Element>
   `,
   props: [
@@ -27,11 +41,14 @@ export default Blits.Component('HorizontalContainer', {
     'itemOffset',
     'items',
     'looping',
+    { key: 'containerWidth', default: 1770 },
     'title',
     {
       key: 'gap',
       default: 50,
     },
+    { key: 'containerBorder', default: false },
+    { key: 'padding', default: 8 },
   ],
   state() {
     return {
@@ -55,12 +72,13 @@ export default Blits.Component('HorizontalContainer', {
       this.rangeTo = this.focused + this.visibleCount
     },
   },
+
   computed: {
     itemTotalWidth() {
       return this.items[0].width + this.gap
     },
     visibleCount() {
-      return 1770 / this.itemTotalWidth
+      return (this.containerWidth || 1770) / this.itemTotalWidth
     },
     lastIndexToScroll() {
       return this.items.length - this.visibleCount
@@ -89,9 +107,9 @@ export default Blits.Component('HorizontalContainer', {
       if (this.autoScroll) {
         // this.x = -this.rowOffset(this.focused)  //stara logika
         this.x =
-          0 -
+          this.padding -
           (this.lastIndexToScroll < 0
-            ? 0
+            ? this.padding
             : Math.min(this.focused, this.lastIndexToScroll) * this.itemTotalWidth)
       }
     },

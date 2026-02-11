@@ -1,7 +1,6 @@
 import Blits from '@lightningjs/blits'
 import { getBackdropUrl } from '../api'
 import { FocusBorder } from './FocusBorder'
-import fallback from '../../public/assets/red.png'
 
 export default Blits.Component('Card', {
   props: ['key', 'items'],
@@ -61,7 +60,7 @@ export default Blits.Component('Card', {
         font="PoppinsSemiBold"
     /></Layout>`,
   state() {
-    return { backdrop: fallback }
+    return { backdrop: '' }
   },
   hooks: {
     //Lifecycle events

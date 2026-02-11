@@ -14,11 +14,14 @@ export default Blits.Component('Detail', {
   components: { Column, VerticalContainer, GenreLabel },
   template: `
     <Element w="1920" h="1080" color="#0D0E12"
-      ><Element x="318" w="1600" h="900" :src="$backdrop" /><Element
+      ><Element
         x="318"
         w="1600"
         h="900"
-        color="{left: '#0D0E12', bottom: '#0D0E12'}"
+        :src="$backdrop"
+        fit="{
+      type: 'cover', position: { x: 0.5, y: 0.5 } }"
+      /><Element x="318" w="1600" h="900" color="{left: '#0D0E12', bottom: '#0D0E12'}"
         ><Element width="1920" height="1006" y="48"
           ><Element width="832" height="556" x="-228" /><Text
             x="-228"
@@ -93,7 +96,7 @@ export default Blits.Component('Detail', {
         .filter((item) => item.logo_path)
         .map((item) => getBackdropUrl(item.logo_path, 'w300'))
       this.genres = this.data.genres.map((item) => item.name).sort()
-      this.backdrop = getBackdropUrl(this.data?.backdrop_path, 'w1280')
+      this.backdrop = getBackdropUrl(this.data?.backdrop_path || this.data?.poster_path, 'w1280')
       this.similar = await getSimilarMovies5Pages(this.id)
       this.$select('content').$focus()
     },
