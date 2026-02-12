@@ -1,10 +1,7 @@
 // @ts-nocheck
 import Blits from '@lightningjs/blits'
-import HorizontalContainer from './HorizontalContainer'
-import NavbarRow from './NavbarRow'
 
 export default Blits.Component('VerticalContainer', {
-  components: { HorizontalContainer, NavbarRow },
   template: `
     <Element :y.transition="$y">
       <Component

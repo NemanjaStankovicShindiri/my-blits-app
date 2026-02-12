@@ -1,11 +1,7 @@
 // @ts-nocheck
 import Blits from '@lightningjs/blits'
-import Card from './Card'
-import Button from './Button'
-import DetailsButton from './DetailsButton'
 
 export default Blits.Component('HorizontalContainer', {
-  components: { Card, Button, DetailsButton },
   template: `
     <Element>
       <Text content="$title" color="#FFF" h="50" />
@@ -21,7 +17,7 @@ export default Blits.Component('HorizontalContainer', {
     ]
       : []"
       >
-        <Element :x.transition="$x" ref="container" y="8">
+        <Element :x.transition="$x" ref="container" :y="$padding">
           <Component
             :for="(item, index) in $items"
             :range="{from: $rangeFrom, to: $rangeTo}"

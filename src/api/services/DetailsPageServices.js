@@ -1,3 +1,7 @@
+import Button from '../../components/Button'
+import Card from '../../components/Card'
+import DetailsButton from '../../components/DetailsButton'
+import HorizontalContainer from '../../components/HorizontalContainer'
 import tmdbApi from '../tmdbInstance'
 
 export async function getMovieDetails(id) {
@@ -29,14 +33,14 @@ export async function getSimilarMovies5Pages(id) {
 
     const topRail = {
       title: 'Featured Movie',
-      type: 'HorizontalContainer',
+      type: HorizontalContainer,
       containerBorder: false,
       containerWidth: 1770,
       rowH: 216,
       items: [
         {
           data: singleMovie,
-          type: 'Card',
+          type: Card,
           width: 330,
           height: 198,
           onEnter: (id) => `/details/${id}`,
@@ -46,13 +50,13 @@ export async function getSimilarMovies5Pages(id) {
 
     const actionButtons = {
       rowH: 63,
-      type: 'HorizontalContainer',
+      type: HorizontalContainer,
       title: '',
       gap: 24,
       items: [
         {
           data: { src: 'assets/detailsButtons/play.png', text: 'Play' },
-          type: 'DetailsButton',
+          type: DetailsButton,
           width: 63,
           height: 63,
         },
@@ -61,7 +65,7 @@ export async function getSimilarMovies5Pages(id) {
             src: 'assets/detailsButtons/add.png',
             text: 'Add to watchlist',
           },
-          type: 'DetailsButton',
+          type: DetailsButton,
           width: 63,
           height: 63,
         },
@@ -70,7 +74,7 @@ export async function getSimilarMovies5Pages(id) {
             src: 'assets/detailsButtons/flag.png',
             text: 'Report',
           },
-          type: 'DetailsButton',
+          type: DetailsButton,
           width: 63,
           height: 63,
         },
@@ -80,56 +84,56 @@ export async function getSimilarMovies5Pages(id) {
 
     const seasonsButtons = {
       rowH: 45,
-      type: 'HorizontalContainer',
+      type: HorizontalContainer,
       title: '',
       containerBorder: true,
       gap: 8,
       items: [
         {
           data: { text: 'Season 5' },
-          type: 'Button',
+          type: Button,
           width: 102,
           height: 45,
         },
         {
           data: { text: 'Season 6' },
-          type: 'Button',
+          type: Button,
           width: 102,
           height: 45,
         },
         {
           data: { text: 'Season 7' },
-          type: 'Button',
+          type: Button,
           width: 102,
           height: 45,
         },
         {
           data: { text: 'Season 8' },
-          type: 'Button',
+          type: Button,
           width: 102,
           height: 45,
         },
         {
           data: { text: 'Season 9' },
-          type: 'Button',
+          type: Button,
           width: 102,
           height: 45,
         },
         {
           data: { text: 'Season 10' },
-          type: 'Button',
+          type: Button,
           width: 102,
           height: 45,
         },
         {
           data: { text: 'Season 11' },
-          type: 'Button',
+          type: Button,
           width: 102,
           height: 45,
         },
         {
           data: { text: 'Season 12' },
-          type: 'Button',
+          type: Button,
           width: 102,
           height: 45,
         },
@@ -142,14 +146,14 @@ export async function getSimilarMovies5Pages(id) {
     const similarMovies = responses.slice(0, 3).map((item, index) => {
       return {
         title: railNames[index],
-        type: 'HorizontalContainer',
+        type: HorizontalContainer,
         containerBorder: false,
         containerWidth: 1770,
         rowH: 216,
         items: item.data.results.map((singleMovie) => {
           return {
             data: singleMovie,
-            type: 'Card',
+            type: Card,
             width: 330,
             height: 198,
             onEnter: (id) => {
@@ -165,7 +169,7 @@ export async function getSimilarMovies5Pages(id) {
     const resCast = {
       title: 'Tuljani',
       rowH: 216,
-      type: 'HorizontalContainer',
+      type: HorizontalContainer,
       containerWidth: 1770,
       items: responses[3].data.cast.slice(0, 7).map((item) => {
         return {
@@ -173,7 +177,7 @@ export async function getSimilarMovies5Pages(id) {
           id: item.id,
           text: item.name,
           subText: item.character,
-          type: 'Card',
+          type: Card,
           onEnter: (id) => {
             return `/person/${id}`
           },

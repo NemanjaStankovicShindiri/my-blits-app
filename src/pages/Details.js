@@ -64,14 +64,7 @@ export default Blits.Component('Detail', {
               key="$index"
             /> </Layout
           ><Element x="-318" width="1920" height="495" y="584" overflow="false">
-            <VerticalContainer
-              x="96"
-              :items="$similar"
-              rowSpacing="30"
-              ref="content"
-              autoScroll="true"
-              looping="true"
-              clipping="false"
+            <VerticalContainer x="96" :items="$similar" rowSpacing="30" ref="content" autoScroll="true" looping="true"
           /></Element>
         </Element>
       </Element>
