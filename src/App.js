@@ -2,6 +2,7 @@ import Blits from '@lightningjs/blits'
 
 import Home from './pages/Home.js'
 import Details from './pages/Details.js'
+import EPGPage from './pages/EPGPage.js'
 
 export default Blits.Application({
   template: `
@@ -16,5 +17,6 @@ export default Blits.Application({
       component: Details,
       options: { keepAlive: true },
     },
+    { path: '/epg', component: EPGPage },
   ],
 })

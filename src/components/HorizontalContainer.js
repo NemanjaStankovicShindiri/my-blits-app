@@ -6,6 +6,7 @@ export default Blits.Component('HorizontalContainer', {
     <Element>
       <Text content="$title" color="#FFF" h="50" />
       <Element
+        zIndex="2"
         :width="$containerWidth+2*$padding"
         :height="$items[0].height+2*$padding"
         :y="$title ? 50 : 0"
@@ -17,7 +18,7 @@ export default Blits.Component('HorizontalContainer', {
     ]
       : []"
       >
-        <Element :x.transition="$x" ref="container" :y="$padding">
+        <Element :x.transition="$x" ref="container" :y="$padding" zIndex="2">
           <Component
             :for="(item, index) in $items"
             :range="{from: $rangeFrom, to: $rangeTo}"
@@ -49,7 +50,7 @@ export default Blits.Component('HorizontalContainer', {
   state() {
     return {
       focused: 0,
-      x: this.padding,
+      x: 0,
       rangeFrom: 0,
       rangeTo: this.visibleCount,
     }
@@ -60,10 +61,12 @@ export default Blits.Component('HorizontalContainer', {
     },
     focused(value) {
       const focusItem = this.$select(`list-item-${value}`)
+      console.log('asdf focXXX: ', this.$select(`list-item-${4}`))
       if (focusItem && focusItem.$focus) {
         focusItem.$focus()
         this.scroll()
       }
+
       this.rangeFrom = this.focused + Math.min(-1, this.lastIndexToScroll - 1 - this.focused)
       this.rangeTo = this.focused + this.visibleCount
     },
@@ -87,13 +90,18 @@ export default Blits.Component('HorizontalContainer', {
         : Math.max(0, Math.min(this.focused + direction, this.items.length - 1))
       this.focused = nextFocus
     },
+    // POTENCIJALNA POZICIJA x
+    getFocusedAbsoluteX() {
+      return this.rowOffset(this.focused) + this.x
+    },
+
     rowOffset(index) {
       return index === 0
         ? 0
         : this.items.slice(0, index).reduce((acc, curr) => {
-            //check if this item has more childs inside - first value would be used horizontal - vertical, other in vertical - horiz
-            const w = curr?.items ? curr?.items[0].width : curr.width
-            return acc + w + this.gap
+            const w = curr?.items ? curr?.items?.[0]?.width : curr?.width
+
+            return acc + (w || 0) + this.gap
           }, 0)
     },
     rowX(index) {
@@ -101,7 +109,7 @@ export default Blits.Component('HorizontalContainer', {
     },
     scroll() {
       if (this.autoScroll) {
-        // this.x = -this.rowOffset(this.focused)  //stara logika
+        this.x = -this.rowOffset(this.focused) //stara logika
         this.x =
           this.padding -
           (this.lastIndexToScroll < 0
@@ -109,7 +117,16 @@ export default Blits.Component('HorizontalContainer', {
               ? 0
               : this.padding
             : Math.min(this.focused, this.lastIndexToScroll) * this.itemTotalWidth)
+        const absX = this.getFocusedAbsoluteX()
+        console.log('ABS X:', absX)
+        console.log('asdf focusedX of hor: ', this.x)
       }
+    },
+  },
+  hooks: {
+    ready() {
+      console.log('Horizontal container ', this)
+      this.x = this.padding
     },
   },
   input: {

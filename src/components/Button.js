@@ -16,6 +16,7 @@ export default Blits.Component('Button', {
       :h="$height"
       :color="$hasFocus ? { left:'#ED51F0', right:'#9A33FF' } : 'transparent'"
       :effects="[ { type: 'radius', props: { radius: 50 } } ]"
+      zIndex="1"
     >
       <Text
         :content="$items?.data?.text"

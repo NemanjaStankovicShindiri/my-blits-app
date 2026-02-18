@@ -1,11 +1,13 @@
 import tmdbApi from '../tmdbInstance'
+import HorizontalContainer from '../../components/HorizontalContainer'
+import Card from '../../components/Card'
 export async function getMovies(slice = false) {
   try {
     const endpoints = [
       {
         title: 'Popular Movies',
         path: '/movie/popular',
-        type: 'HorizontalContainer',
+        type: HorizontalContainer,
         width: 200,
         height: 200,
         rowH: 200,
@@ -18,7 +20,7 @@ export async function getMovies(slice = false) {
       {
         title: 'Trending Movies',
         path: '/trending/movie/week',
-        type: 'HorizontalContainer',
+        type: HorizontalContainer,
         width: 200,
         height: 600,
         onEnter: (id) => {
@@ -30,7 +32,7 @@ export async function getMovies(slice = false) {
       {
         title: 'Top Rated Movies',
         path: '/movie/top_rated',
-        type: 'HorizontalContainer',
+        type: HorizontalContainer,
         width: 640,
         height: 360,
         itemOffset: 50,
@@ -43,7 +45,7 @@ export async function getMovies(slice = false) {
       {
         title: 'Upcoming Movies',
         path: '/movie/upcoming',
-        type: 'HorizontalContainer',
+        type: HorizontalContainer,
         width: 200,
         height: 100,
         onEnter: (id) => {
@@ -63,7 +65,7 @@ export async function getMovies(slice = false) {
             onEnter: (id) => {
               return `/details/${id}`
             },
-            type: 'Card',
+            type: Card,
             width: endpoint.width,
             height: endpoint.height,
             data: {

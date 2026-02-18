@@ -75,6 +75,8 @@ export default Blits.Component('Card', {
       // Triggers when components is finally rendered and doesnt change. If it never triggers it means component rerenders constantly
     },
     focus() {
+      console.log('asdf this: ', this.x)
+
       this.$emit('changeBackground', { img: this.backdrop })
     },
   },

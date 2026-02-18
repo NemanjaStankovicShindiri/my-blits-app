@@ -4,7 +4,6 @@
 
 import Blits from '@lightningjs/blits'
 
-import Column from '../components/Column.js'
 import { getMovies } from '../api/services/MediaServices.js'
 import VerticalContainer from '../components/VerticalContainer.js'
 
@@ -55,6 +54,7 @@ export default Blits.Component('Home', {
     },
     async fetchData() {
       const data = await getMovies(false)
+      console.log('DATA', data)
       this.items = data
     },
   },
