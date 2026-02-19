@@ -44,7 +44,6 @@ export default Blits.Component('NavbarRow', {
     },
     focused(value) {
       const focusItem = this.$select(`btn-${value}`)
-      console.log('Focused navbar button', this.$select('btn-0'))
       if (focusItem && focusItem.$focus) {
         focusItem.$focus()
       }

@@ -54,7 +54,6 @@ export default Blits.Component('Home', {
     },
     async fetchData() {
       const data = await getMovies(false)
-      console.log('DATA', data)
       this.items = data
     },
   },

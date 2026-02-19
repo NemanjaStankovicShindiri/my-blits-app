@@ -1,7 +1,7 @@
 import Blits from '@lightningjs/blits'
 
 export default Blits.Component('EPGCard', {
-  props: ['key', 'items'],
+  props: ['key', 'items', 'gap'],
   template: `
     <Element
       :width="$width"
@@ -20,7 +20,6 @@ export default Blits.Component('EPGCard', {
     </Element>`,
   state() {
     return {
-      w: 0,
       formattedTime: '',
     }
   },
@@ -34,26 +33,44 @@ export default Blits.Component('EPGCard', {
         hour: '2-digit',
         minute: '2-digit',
         hour12: false,
+        timeZone: 'UTC',
       })
       const endTime = stop.toLocaleTimeString('sr-RS', {
         hour: '2-digit',
         minute: '2-digit',
         hour12: false,
+        timeZone: 'UTC',
       })
       this.formattedTime = startTime + ' - ' + endTime
-      const durationMS = stop - start
-      this.w = durationMS / 60000
-      this.$size({ w: this.w })
-      return this.w
+      const duration = (stop - start) / 60000
+      const width = duration * 8.8 - this.gap
+      return width
     },
   },
   hooks: {
-    init() {
-      // const start = new Date(this.items.data.start)
-      // const stop = new Date(this.items.data.stop)
-      // const durationMS = stop - start
-      // this.w = durationMS / 60000
-      // console.log('asdf w: ', this.w)
+    ready() {
+      const start = new Date(this.items.data.start)
+      const stop = new Date(this.items.data.stop)
+
+      const duration = (stop - start) / 60000
+      const w = duration * 8.8 - this.gap
+
+      this.$size({ w })
+
+      this.formattedTime =
+        start.toLocaleTimeString('sr-RS', {
+          hour: '2-digit',
+          minute: '2-digit',
+          hour12: false,
+          timeZone: 'UTC',
+        }) +
+        ' - ' +
+        stop.toLocaleTimeString('sr-RS', {
+          hour: '2-digit',
+          minute: '2-digit',
+          hour12: false,
+          timeZone: 'UTC',
+        })
     },
   },
 })

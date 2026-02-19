@@ -27,12 +27,12 @@ export default Blits.Component('VerticalContainer', {
     'looping',
     {
       key: 'gap',
-      default: 100,
+      default: 16,
     },
   ],
   state() {
     return {
-      focused: 0,
+      focused: 1,
       y: 0,
     }
   },
@@ -52,7 +52,7 @@ export default Blits.Component('VerticalContainer', {
     changeFocus(direction) {
       const nextFocus = this.looping
         ? (this.focused + direction + this.items.length) % this.items.length
-        : Math.max(0, Math.min(this.focused + direction, this.items.length - 1))
+        : Math.max(1, Math.min(this.focused + direction, this.items.length - 1))
       this.focused = nextFocus
     },
     rowOffset(index) {
