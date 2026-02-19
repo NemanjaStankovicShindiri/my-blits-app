@@ -92,6 +92,7 @@ export default Blits.Component('HorizontalContainer', {
     },
     // POTENCIJALNA POZICIJA x
     getFocusedAbsoluteX() {
+      console.log('asdf ABS X: ', this.rowOffset(this.focused) + this.x)
       return this.rowOffset(this.focused) + this.x
     },
 

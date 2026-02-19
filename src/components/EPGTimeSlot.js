@@ -4,7 +4,7 @@ export default Blits.Component('EPGTimeSlot', {
   props: ['key', 'items', 'gap'],
   template: `
     <Element
-      :width="$width"
+      :width="$items.width"
       height="48"
       color="#221435"
       :effects="[

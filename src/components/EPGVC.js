@@ -16,6 +16,7 @@ export default Blits.Component('VerticalContainer', {
         containerBorder="$item.containerBorder"
         :gap="$item.gap || 50"
         autoScroll="true"
+        :rowsX="$rowsX"
       />
     </Element>
   `,
@@ -34,6 +35,7 @@ export default Blits.Component('VerticalContainer', {
     return {
       focused: 1,
       y: 0,
+      rowsX: 0,
     }
   },
   watch: {
@@ -77,6 +79,13 @@ export default Blits.Component('VerticalContainer', {
     },
     down() {
       this.changeFocus(1)
+    },
+  },
+  hooks: {
+    init() {
+      this.$listen('scrollRows', (scrollAmount) => {
+        this.rowsX += scrollAmount
+      })
     },
   },
 })

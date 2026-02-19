@@ -20,7 +20,7 @@ export default Blits.Component('EPGPage', {
     </Element>
   `,
   state() {
-    return { data: [] }
+    return { data: [], x: 0 }
   },
   hooks: {
     init() {
@@ -40,6 +40,7 @@ export default Blits.Component('EPGPage', {
         title: '',
         gap: 8,
         items: item.epgs.map((item) => ({
+          width: this.getEpgWidth(item),
           type: EPGCard,
           data: item,
         })),
@@ -53,6 +54,7 @@ export default Blits.Component('EPGPage', {
           gap: 4,
           items: timeArray.map((time) => ({
             type: EPGTimeSlot,
+            width: 30 * 8.8 - 4,
             data: { title: time },
           })),
         },
@@ -62,6 +64,28 @@ export default Blits.Component('EPGPage', {
     },
     ready() {
       this.$select('EPGVC').$focus()
+    },
+  },
+  methods: {
+    getEpgWidth(item) {
+      const start = new Date(item.start)
+      const stop = new Date(item.stop)
+      const startTime = start.toLocaleTimeString('sr-RS', {
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false,
+        timeZone: 'UTC',
+      })
+      const endTime = stop.toLocaleTimeString('sr-RS', {
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false,
+        timeZone: 'UTC',
+      })
+      this.formattedTime = startTime + ' - ' + endTime
+      const duration = (stop - start) / 60000
+      const width = duration * 8.8 - 8
+      return width
     },
   },
 })
