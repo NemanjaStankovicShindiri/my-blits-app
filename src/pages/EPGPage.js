@@ -26,14 +26,6 @@ export default Blits.Component('EPGPage', {
     init() {
       const res = getEpg()
 
-      const timeArray = []
-      for (let hour = 0; hour < 24; hour++) {
-        // :00
-        timeArray.push(`${hour.toString().padStart(2, '0')}:00`)
-        // :30
-        timeArray.push(`${hour.toString().padStart(2, '0')}:30`)
-      }
-
       const rowData = res.map((item) => ({
         rowH: 96,
         type: EPGHC,
@@ -46,21 +38,7 @@ export default Blits.Component('EPGPage', {
         })),
       }))
 
-      const data = [
-        {
-          rowH: 48,
-          type: EPGHC,
-          title: '',
-          gap: 4,
-          items: timeArray.map((time) => ({
-            type: EPGTimeSlot,
-            width: 30 * 8.8 - 4,
-            data: { title: time },
-          })),
-        },
-        ...rowData,
-      ]
-      this.data = data
+      this.data = rowData
     },
     ready() {
       this.$select('EPGVC').$focus()
