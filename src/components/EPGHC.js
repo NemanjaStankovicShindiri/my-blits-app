@@ -53,18 +53,6 @@ export default Blits.Component('HorizontalContainer', {
       }
       this.rangeFrom = this.focused + Math.min(-1, this.lastIndexToScroll - 1 - this.focused)
       this.rangeTo = this.focused + this.visibleCount
-
-      const absX = this.rowOffset(this.focused) + this.rowsX
-      const epgCardW = this.items[this.focused].width
-
-      console.log('asdf ABS X EPG: ', absX)
-      console.log('asdf EPG CARD W: ', epgCardW)
-      console.log('asdf epg x calc', absX + epgCardW < 1824)
-
-      if (absX + epgCardW > 1824) {
-        this.$emit('scrollRows', -260)
-        // this.rowsX -= 260
-      }
     },
   },
 
@@ -85,8 +73,23 @@ export default Blits.Component('HorizontalContainer', {
         0,
         Math.min(this.focused + direction, this.items.length - 1)
       )
-      this.isIndexInViewport(nextPotentionalIndex)
-      this.focused = nextPotentionalIndex
+
+      const relX = this.rowOffset(nextPotentionalIndex) + this.rowsX
+      const epgCardW = this.items[nextPotentionalIndex].width
+      if (direction === 1) {
+        if (relX > 1824 || this.focused === nextPotentionalIndex) {
+          //drugo
+          this.$emit('scrollRows', -264)
+        } else {
+          this.focused = nextPotentionalIndex
+        }
+      } else {
+        if (relX + epgCardW + this.gap >= 0 && this.focused !== 0) {
+          this.focused = nextPotentionalIndex
+        } else {
+          this.$emit('scrollRows', 264)
+        }
+      }
     },
     isIndexInViewport(index) {
       const item = this.$select(`list-item-${index}`)

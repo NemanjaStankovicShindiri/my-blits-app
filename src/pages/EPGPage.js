@@ -85,6 +85,7 @@ export default Blits.Component('EPGPage', {
       this.formattedTime = startTime + ' - ' + endTime
       const duration = (stop - start) / 60000
       const width = duration * 8.8 - 8
+      console.log('ASDF', startTime, endTime, width)
       return width
     },
   },
