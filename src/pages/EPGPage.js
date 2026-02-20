@@ -16,11 +16,11 @@ export default Blits.Component('EPGPage', {
   },
   template: `
     <Element w="1920" h="1080" :src="$src">
-      <EPGVC :items="$data" ref="EPGVC" />
+      <EPGVC :items="$data" ref="EPGVC" width="1824" height="720" x="96" y="406" />
     </Element>
   `,
   state() {
-    return { data: [], x: 0 }
+    return { data: [] }
   },
   hooks: {
     init() {
@@ -37,7 +37,6 @@ export default Blits.Component('EPGPage', {
           data: item,
         })),
       }))
-
       this.data = rowData
     },
     ready() {
@@ -63,7 +62,6 @@ export default Blits.Component('EPGPage', {
       this.formattedTime = startTime + ' - ' + endTime
       const duration = (stop - start) / 60000
       const width = duration * 8.8 - 8
-      console.log('ASDF', startTime, endTime, width)
       return width
     },
   },

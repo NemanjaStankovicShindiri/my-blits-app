@@ -5,7 +5,7 @@ import EPGCard from './EPGCard'
 export default Blits.Component('HorizontalContainer', {
   components: { EPGCard },
   template: `
-    <Element x="96" width="1824" height="0">
+    <Element width="$containerWidth">
       <Element :x.transition="$rowsX" direction="horizontal" ref="container" :gap="$gap">
         <Component
           :for="(item, index) in $items"
@@ -77,14 +77,14 @@ export default Blits.Component('HorizontalContainer', {
       const relX = this.rowOffset(nextPotentionalIndex) + this.rowsX
       const epgCardW = this.items[nextPotentionalIndex].width
       if (direction === 1) {
-        if (relX > 1824 || this.focused === nextPotentionalIndex) {
+        if (relX > this.containerWidth || this.focused === nextPotentionalIndex) {
           //drugo
           this.$emit('scrollRows', -264)
         } else {
           this.focused = nextPotentionalIndex
         }
       } else {
-        if (relX + epgCardW + this.gap >= 0 && this.focused !== 0) {
+        if (relX + epgCardW + this.gap >= 0.00001 && this.focused !== 0) {
           this.focused = nextPotentionalIndex
         } else {
           this.$emit('scrollRows', 264)

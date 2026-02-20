@@ -6,30 +6,35 @@ import EPGHC from './EPGHC'
 export default Blits.Component('VerticalContainer', {
   components: { EPGHC },
   template: `
-    <Element :y.transition="$y">
+    <Element :width="$width" :height="$height" clipping="true">
       <EPGHC
         gap="4"
         title=""
         :items="$timeSlotItems"
         :rowsX="$rowsX"
         key="-1"
-        containerWidth="1824"
+        containerWidth="$width"
         containerBorder="true"
+        zIndex="1"
       />
-      <Component
-        :for="(item, index) in $items"
-        is="$item.type"
-        :y="$rowY($index)"
-        :ref="'list-item-'+$index"
-        :key="$index"
-        :items="$item.items ? $item.items : $item"
-        title="$item.title"
-        :containerWidth="$item.containerWidth || 1770"
-        containerBorder="$item.containerBorder"
-        :gap="$item.gap || 50"
-        autoScroll="true"
-        :rowsX="$rowsX"
-      />
+      <Element y="56" clipping="true" :width="$width" :height="$height - 56">
+        <Element :y.transition="$y">
+          <Component
+            :for="(item, index) in $items"
+            is="$item.type"
+            :y="$rowY($index)"
+            :ref="'list-item-'+$index"
+            :key="$index"
+            :items="$item.items ? $item.items : $item"
+            title="$item.title"
+            :containerWidth="$item.containerWidth || 1770"
+            containerBorder="$item.containerBorder"
+            :gap="$item.gap || 50"
+            autoScroll="true"
+            :rowsX="$rowsX"
+          />
+        </Element>
+      </Element>
     </Element>
   `,
   props: [
@@ -42,6 +47,8 @@ export default Blits.Component('VerticalContainer', {
       key: 'gap',
       default: 16,
     },
+    'width',
+    'height',
   ],
   state() {
     return {
@@ -66,17 +73,15 @@ export default Blits.Component('VerticalContainer', {
   methods: {
     changeFocus(direction) {
       this.y -= 112 * direction
-      const nextFocus = this.looping
-        ? (this.focused + direction + this.items.length) % this.items.length
-        : Math.max(0, Math.min(this.focused + direction, this.items.length - 1))
+      const nextFocus = Math.max(0, Math.min(this.focused + direction, this.items.length - 1))
       this.focused = nextFocus
     },
     rowOffset(index) {
       return index === 0
-        ? 64
+        ? 0
         : this.items
             .slice(0, index)
-            .reduce((acc, curr) => acc + this.gap + (curr?.rowH ? curr?.rowH : curr.height), 64)
+            .reduce((acc, curr) => acc + this.gap + (curr?.rowH ? curr?.rowH : curr.height), 0)
     },
     rowY(index) {
       return this.rowOffset(index)
