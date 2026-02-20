@@ -3,11 +3,10 @@
  */
 
 import Blits from '@lightningjs/blits'
-import { getEpg, getSingleEpg } from '../api/epgMock'
+import { getEpg } from '../api/epgMock'
 import EPGCard from '../components/EPGCard'
 import EPGHC from '../components/EPGHC'
 import EPGVC from '../components/EPGVC'
-import EPGTimeSlot from '../components/EPGTimeSlot'
 
 export default Blits.Component('EPGPage', {
   components: {
@@ -31,6 +30,7 @@ export default Blits.Component('EPGPage', {
         type: EPGHC,
         title: '',
         gap: 8,
+        containerWidth: 1824,
         items: item.epgs.map((item) => ({
           width: this.getEpgWidth(item),
           type: EPGCard,

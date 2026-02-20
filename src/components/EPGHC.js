@@ -6,16 +6,24 @@ export default Blits.Component('HorizontalContainer', {
   components: { EPGCard },
   template: `
     <Element width="$containerWidth">
-      <Element :x.transition="$rowsX" direction="horizontal" ref="container" :gap="$gap">
-        <Component
-          :for="(item, index) in $items"
-          is="$item.type"
-          :x="$rowX($index)"
-          :ref="'list-item-'+$index"
-          :key="$index"
-          :items="$item.items ? $item.items : $item"
-          :gap="$gap"
-        /> </Element
+      <Element
+        width="260"
+        height="$rowH"
+        color="#221435"
+        :effects="[
+    { type: 'radius', props: { radius: 8 } },
+      ]" />
+      <Element x="276" clipping="true" width="$containerWidth - 276" height="$height">
+        <Element :x.transition="$rowsX" ref="container" :gap="$gap">
+          <Component
+            :for="(item, index) in $items"
+            is="$item.type"
+            :x="$rowX($index)"
+            :ref="'list-item-'+$index"
+            :key="$index"
+            :items="$item.items ? $item.items : $item"
+            :gap="$gap"
+          /> </Element></Element
     ></Element>
   `,
   props: [
@@ -33,6 +41,8 @@ export default Blits.Component('HorizontalContainer', {
     { key: 'containerBorder', default: false },
     { key: 'padding', default: 0 },
     'rowsX',
+    'height',
+    'rowH',
   ],
   state() {
     return {
@@ -56,17 +66,12 @@ export default Blits.Component('HorizontalContainer', {
     },
   },
 
-  computed: {
-    itemTotalWidth() {
-      return this.items[0].width + this.gap
-    },
-    visibleCount() {
-      return (this.containerWidth || 1770) / this.itemTotalWidth
-    },
-    lastIndexToScroll() {
-      return this.items.length - this.visibleCount
+  hooks: {
+    ready() {
+      console.log('EPGHC ', this.rowH)
     },
   },
+
   methods: {
     changeFocus(direction) {
       const nextPotentionalIndex = Math.max(
@@ -77,7 +82,7 @@ export default Blits.Component('HorizontalContainer', {
       const relX = this.rowOffset(nextPotentionalIndex) + this.rowsX
       const epgCardW = this.items[nextPotentionalIndex].width
       if (direction === 1) {
-        if (relX > this.containerWidth || this.focused === nextPotentionalIndex) {
+        if (relX > this.containerWidth - 276 || this.focused === nextPotentionalIndex) {
           //drugo
           this.$emit('scrollRows', -264)
         } else {

@@ -10,17 +10,21 @@ export default Blits.Component('VerticalContainer', {
       <EPGHC
         gap="4"
         title=""
+        rowH="48"
         :items="$timeSlotItems"
         :rowsX="$rowsX"
         key="-1"
-        containerWidth="$width"
+        containerWidth="1824"
         containerBorder="true"
         zIndex="1"
+        height="56"
       />
       <Element y="56" clipping="true" :width="$width" :height="$height - 56">
         <Element :y.transition="$y">
           <Component
+            height="$height - 56"
             :for="(item, index) in $items"
+            rowH="$item.rowH"
             is="$item.type"
             :y="$rowY($index)"
             :ref="'list-item-'+$index"
