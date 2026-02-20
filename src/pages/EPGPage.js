@@ -30,7 +30,6 @@ export default Blits.Component('EPGPage', {
         type: EPGHC,
         title: '',
         gap: 8,
-        containerWidth: 1824,
         items: item.epgs.map((item) => ({
           width: this.getEpgWidth(item),
           type: EPGCard,

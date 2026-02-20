@@ -5,7 +5,7 @@ import EPGCard from './EPGCard'
 export default Blits.Component('HorizontalContainer', {
   components: { EPGCard },
   template: `
-    <Element width="$containerWidth">
+    <Element width="$width">
       <Element
         width="260"
         height="$rowH"
@@ -13,7 +13,7 @@ export default Blits.Component('HorizontalContainer', {
         :effects="[
     { type: 'radius', props: { radius: 8 } },
       ]" />
-      <Element x="276" clipping="true" width="$containerWidth - 276" height="$height">
+      <Element x="276" clipping="true" width="$width - 276" height="$height">
         <Element :x.transition="$rowsX" ref="container" :gap="$gap">
           <Component
             :for="(item, index) in $items"
@@ -32,7 +32,7 @@ export default Blits.Component('HorizontalContainer', {
     'itemOffset',
     'items',
     'looping',
-    { key: 'containerWidth', default: 1770 },
+    { key: 'width', default: 1770 },
     'title',
     {
       key: 'gap',
@@ -82,7 +82,7 @@ export default Blits.Component('HorizontalContainer', {
       const relX = this.rowOffset(nextPotentionalIndex) + this.rowsX
       const epgCardW = this.items[nextPotentionalIndex].width
       if (direction === 1) {
-        if (relX > this.containerWidth - 276 || this.focused === nextPotentionalIndex) {
+        if (relX > this.width - 276 || this.focused === nextPotentionalIndex) {
           //drugo
           this.$emit('scrollRows', -264)
         } else {
