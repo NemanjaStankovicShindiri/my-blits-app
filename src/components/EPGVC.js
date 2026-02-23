@@ -93,8 +93,10 @@ export default Blits.Component('VerticalContainer', {
           xDist = Math.abs(currentElementMidPoint - nextRowElement)
         }
         console.log('Distance midpoint', xDist)
-        if (xDist <= distance) distance = xDist
-        else {
+        if (xDist <= distance) {
+          distance = xDist
+          nextIndexToFocus = i
+        } else {
           nextIndexToFocus = i - 1
           break
         }

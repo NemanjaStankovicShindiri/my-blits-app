@@ -101,6 +101,7 @@ export default Blits.Component('HorizontalContainer', {
     },
     getMidPoint(index) {
       const elStart = this.rowOffset(index) + this.rowsX
+      console.log('midpoint', this.items[index].data.start)
       const epgCardW = this.items[index].width
       const elEnd = elStart + epgCardW
       if (elEnd < 0 || elStart > this.width - 276) {
