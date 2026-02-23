@@ -80,19 +80,16 @@ export default Blits.Component('VerticalContainer', {
       const focusedRow = this.$select(`list-item-${this.focused}`)
       const nextFocusedRow = this.$select(`list-item-${nextFocus}`)
       const currentElementMidPoint = focusedRow.getMidPoint(focusedRow.focused)
-      console.log('Current element midpoint ', currentElementMidPoint)
       let nextIndexToFocus = -1
       let distance = Infinity
       for (let i = 0; i < nextFocusedRow.items.length; i++) {
         const nextRowElement = nextFocusedRow.getMidPoint(i)
-        console.log('Next element midpoint ', nextRowElement)
         let xDist = 0
         if (nextRowElement == null) {
           xDist = Infinity
         } else {
           xDist = Math.abs(currentElementMidPoint - nextRowElement)
         }
-        console.log('Distance midpoint', xDist)
         if (xDist <= distance) {
           distance = xDist
           nextIndexToFocus = i

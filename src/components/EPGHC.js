@@ -19,6 +19,7 @@ export default Blits.Component('HorizontalContainer', {
             :for="(item, index) in $items"
             is="$item.type"
             :x="$rowX($index)"
+            :rowX="$rowsX"
             :ref="'list-item-'+$index"
             :key="$index"
             :items="$item.items ? $item.items : $item"
@@ -101,26 +102,21 @@ export default Blits.Component('HorizontalContainer', {
     },
     getMidPoint(index) {
       const elStart = this.rowOffset(index) + this.rowsX
-      console.log('midpoint', this.items[index].data.start)
       const epgCardW = this.items[index].width
       const elEnd = elStart + epgCardW
       if (elEnd < 0 || elStart > this.width - 276) {
-        console.log('midpoint outside viewport')
         //van viewport-a
         return null
       }
       if (elStart < 0 && elEnd > this.width - 276) {
-        console.log('midpoint across screen')
         //prostire se preko celog ekrana
         return (this.width - 276) / 2
       }
       if (elEnd > this.width - 276) {
-        console.log('midpoint right edge')
         //sece desnu ivicu
         return (this.width - 276 - elStart) / 2 + elStart
       }
       if (elStart < 0) {
-        console.log('midpoint left edge')
         //sece levu ivicu
         return elEnd / 2
       }
