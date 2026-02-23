@@ -11,12 +11,25 @@ export default Blits.Component('EPGCard', {
     { type: 'radius', props: { radius: 8 } },
       ]"
     >
-      <Layout direction="vertical" padding="24"
-        ><Text :content="$formattedTime" font="PoppinsMedium" size="16" /><Text
-          content="$items.data.title"
+      <Element
+        ><Text
+          x="24"
+          y="19.5"
+          :content="$items.width-24>30?$formattedTime:''"
+          font="PoppinsMedium"
+          size="16"
+          textoverflow="true"
+          maxwidth="$items.width - 48"
+          maxlines="1" /><Text
+          y="42.5"
+          x="24"
+          :content="$items.width-24>30?$items.data.title:''"
           size="14"
           font="PoppinsMedium"
-      /></Layout>
+          textoverflow="true"
+          maxwidth="$items.width - 48"
+          maxlines="1"
+      /></Element>
     </Element>`,
   state() {
     return {
