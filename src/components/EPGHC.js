@@ -14,7 +14,7 @@ export default Blits.Component('HorizontalContainer', {
     { type: 'radius', props: { radius: 8 } },
       ]" />
       <Element x="276" clipping="true" width="$width - 276" height="$height">
-        <Element :x.transition="$rowsX" ref="container" :gap="$gap">
+        <Element :x="$rowsX" ref="container" :gap="$gap">
           <Component
             :for="(item, index) in $items"
             is="$item.type"
@@ -66,12 +66,6 @@ export default Blits.Component('HorizontalContainer', {
     },
   },
 
-  hooks: {
-    ready() {
-      console.log('EPGHC ', this.rowH)
-    },
-  },
-
   methods: {
     changeFocus(direction) {
       const nextPotentionalIndex = Math.max(
@@ -96,10 +90,6 @@ export default Blits.Component('HorizontalContainer', {
         }
       }
     },
-    isIndexInViewport(index) {
-      const item = this.$select(`list-item-${index}`)
-      console.log('Next item to focus', item)
-    },
     rowOffset(index) {
       return index === 0
         ? 0
@@ -108,6 +98,32 @@ export default Blits.Component('HorizontalContainer', {
 
             return acc + (w || 0) + this.gap
           }, 0)
+    },
+    getMidPoint(index) {
+      const elStart = this.rowOffset(index) + this.rowsX
+      const epgCardW = this.items[index].width
+      const elEnd = elStart + epgCardW
+      if (elEnd < 0 || elStart > this.width - 276) {
+        console.log('midpoint outside viewport')
+        //van viewport-a
+        return null
+      }
+      if (elStart < 0 && elEnd > this.width - 276) {
+        console.log('midpoint across screen')
+        //prostire se preko celog ekrana
+        return (this.width - 276) / 2
+      }
+      if (elEnd > this.width - 276) {
+        console.log('midpoint right edge')
+        //sece desnu ivicu
+        return (this.width - 276 - elStart) / 2 + elStart
+      }
+      if (elStart < 0) {
+        console.log('midpoint left edge')
+        //sece levu ivicu
+        return elEnd / 2
+      }
+      return elStart + epgCardW / 2
     },
     rowX(index) {
       return index === 0

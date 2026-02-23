@@ -16,11 +16,10 @@ export default Blits.Component('VerticalContainer', {
         key="-1"
         width="$width"
         containerBorder="true"
-        zIndex="1"
         height="56"
       />
       <Element y="56" clipping="true" :width="$width" :height="$height - 56">
-        <Element :y.transition="$y">
+        <Element :y="$y">
           <Component
             height="$height - 56"
             :for="(item, index) in $items"
@@ -78,7 +77,30 @@ export default Blits.Component('VerticalContainer', {
     changeFocus(direction) {
       this.y -= 112 * direction
       const nextFocus = Math.max(0, Math.min(this.focused + direction, this.items.length - 1))
+      const focusedRow = this.$select(`list-item-${this.focused}`)
+      const nextFocusedRow = this.$select(`list-item-${nextFocus}`)
+      const currentElementMidPoint = focusedRow.getMidPoint(focusedRow.focused)
+      console.log('Current element midpoint ', currentElementMidPoint)
+      let nextIndexToFocus = -1
+      let distance = Infinity
+      for (let i = 0; i < nextFocusedRow.items.length; i++) {
+        const nextRowElement = nextFocusedRow.getMidPoint(i)
+        console.log('Next element midpoint ', nextRowElement)
+        let xDist = 0
+        if (nextRowElement == null) {
+          xDist = Infinity
+        } else {
+          xDist = Math.abs(currentElementMidPoint - nextRowElement)
+        }
+        console.log('Distance midpoint', xDist)
+        if (xDist <= distance) distance = xDist
+        else {
+          nextIndexToFocus = i - 1
+          break
+        }
+      }
       this.focused = nextFocus
+      nextFocusedRow.focused = nextIndexToFocus
     },
     rowOffset(index) {
       return index === 0
