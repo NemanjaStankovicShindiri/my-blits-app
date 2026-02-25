@@ -15,7 +15,7 @@ export default Blits.Component('EPGPage', {
   },
   template: `
     <Element w="1920" h="1080" :src="$src">
-      <EPGVC :items="$data" ref="EPGVC" width="1824" height="720" x="96" y="406" />
+      <EPGVC :items="$data" ref="EPGVC" width="1824" height="605" x="96" y="475" />
     </Element>
   `,
   state() {

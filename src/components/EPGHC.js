@@ -1,6 +1,5 @@
 // @ts-nocheck
 import Blits from '@lightningjs/blits'
-import EPGCard from './EPGCard'
 import timelineStart from '../utils/timlineStart'
 
 export default Blits.Component('HorizontalContainer', {

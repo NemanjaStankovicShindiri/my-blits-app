@@ -89,8 +89,22 @@ export default Blits.Component('VerticalContainer', {
   },
   methods: {
     changeFocus(direction) {
-      this.y -= 112 * direction
+      const rowOffset = this.items[0].rowH + this.gap
+      const lastIndexToNotScroll = Math.floor(this.height / rowOffset) - 1
       const nextFocus = Math.max(0, Math.min(this.focused + direction, this.items.length - 1))
+      const nextRowY = this.rowY(nextFocus) + this.y
+      const nextRowBottom = nextRowY + (this.items[nextFocus].rowH || this.items[nextFocus].height)
+
+      const viewportTop = 0
+      const viewportBottom = this.height
+
+      if (direction === 1 && nextRowBottom > viewportBottom) {
+        this.y -= rowOffset
+      }
+
+      if (direction === -1 && nextRowY < viewportTop) {
+        this.y += rowOffset
+      }
       const focusedRow = this.$select(`list-item-${this.focused}`)
       const nextFocusedRow = this.$select(`list-item-${nextFocus}`)
       const currentElementMidPoint = focusedRow.getMidPoint(focusedRow.focused)
