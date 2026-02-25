@@ -2,6 +2,7 @@
 import Blits from '@lightningjs/blits'
 import EPGTimeSlot from './EPGTimeSlot'
 import EPGHC from './EPGHC'
+import apsoluteTimelineStart from '../utils/timlineStart'
 
 export default Blits.Component('VerticalContainer', {
   components: { EPGHC },
@@ -35,6 +36,8 @@ export default Blits.Component('VerticalContainer', {
             :gap="$item.gap || 50"
             autoScroll="true"
             :rowsX="$rowsX"
+            :visibleStartTime="$visibleStartTime"
+            :visibleEndTime="$visibleEndTime"
           />
         </Element>
       </Element>
@@ -54,11 +57,15 @@ export default Blits.Component('VerticalContainer', {
     'height',
   ],
   state() {
+    const now = Date.now()
+    const windowDuration = 3 * 60 * 60 * 1000
     return {
       focused: 0,
       y: 0,
       rowsX: 0,
       timeSlotItems: [],
+      visibleStartTime: now - 30 * 60 * 1000, // viewport starts 30 min before now
+      visibleEndTime: now - 30 * 60 * 1000 + windowDuration,
     }
   },
   watch: {
@@ -131,19 +138,38 @@ export default Blits.Component('VerticalContainer', {
         this.rowsX += scrollAmount
       })
 
+      const timelineStartMs = Date.parse(apsoluteTimelineStart) // UTC
+      const deltaMin = (this.visibleStartTime - timelineStartMs) / 60000
+      this.rowsX = -deltaMin * 8.8
+
       const timeArray = []
-      for (let hour = 0; hour < 24; hour++) {
-        // :00
-        timeArray.push(`${hour.toString().padStart(2, '0')}:00`)
-        // :30
-        timeArray.push(`${hour.toString().padStart(2, '0')}:30`)
+
+      // ⏱️ timeline start – pass this in or import it (e.g. timelineStart)
+      const timelineStartData = new Date(apsoluteTimelineStart)
+      const SLOT_MIN = 30
+      const SLOTS_24H = (24 * 60) / SLOT_MIN // 48
+
+      for (let i = 0; i < SLOTS_24H; i++) {
+        const startTime = new Date(timelineStartData.getTime() + i * SLOT_MIN * 60 * 1000)
+        const stopTime = new Date(startTime.getTime() + SLOT_MIN * 60 * 1000)
+
+        const sh = startTime.getUTCHours().toString().padStart(2, '0')
+        const sm = startTime.getUTCMinutes().toString().padStart(2, '0')
+        const eh = stopTime.getUTCHours().toString().padStart(2, '0')
+        const em = stopTime.getUTCMinutes().toString().padStart(2, '0')
+
+        timeArray.push({
+          type: EPGTimeSlot,
+          width: SLOT_MIN * 8.8 - 4, // stays aligned with your EPG scale
+          data: {
+            title: `${sh}:${sm}`,
+            start: startTime,
+            stop: stopTime,
+          },
+        })
       }
 
-      this.timeSlotItems = timeArray.map((time) => ({
-        type: EPGTimeSlot,
-        width: 30 * 8.8 - 4,
-        data: { title: time },
-      }))
+      this.timeSlotItems = timeArray
     },
   },
 })

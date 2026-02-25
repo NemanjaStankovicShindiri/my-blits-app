@@ -1,0 +1,2 @@
+const apsoluteTimelineStart = '2026-02-25T00:00:00Z'
+export default apsoluteTimelineStart

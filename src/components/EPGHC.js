@@ -1,9 +1,9 @@
 // @ts-nocheck
 import Blits from '@lightningjs/blits'
 import EPGCard from './EPGCard'
+import timelineStart from '../utils/timlineStart'
 
 export default Blits.Component('HorizontalContainer', {
-  components: { EPGCard },
   template: `
     <Element width="$width">
       <Element
@@ -19,7 +19,6 @@ export default Blits.Component('HorizontalContainer', {
             :for="(item, index) in $items"
             is="$item.type"
             :x="$rowX($index)"
-            :rowX="$rowsX"
             :ref="'list-item-'+$index"
             :key="$index"
             :items="$item.items ? $item.items : $item"
@@ -44,6 +43,8 @@ export default Blits.Component('HorizontalContainer', {
     'rowsX',
     'height',
     'rowH',
+    'visibleStartTime',
+    'visibleEndTime',
   ],
   state() {
     return {
@@ -66,15 +67,35 @@ export default Blits.Component('HorizontalContainer', {
       this.rangeTo = this.focused + this.visibleCount
     },
   },
+  hooks: {
+    init() {
+      const nowUtc = Date.now()
 
+      const indexToFocus = this.items.findIndex((item) => {
+        const start = Date.parse(item.data.start)
+        const stop = Date.parse(item.data.stop)
+
+        return start <= nowUtc && stop >= nowUtc
+      })
+
+      this.focused = indexToFocus
+    },
+  },
   methods: {
+    timeToX(startTime) {
+      const timelineStartData = new Date(timelineStart)
+
+      const minutesFromStart = (startTime - timelineStartData) / 60000
+      const pixelsPerMinute = 8.8
+      return minutesFromStart * pixelsPerMinute
+    },
     changeFocus(direction) {
       const nextPotentionalIndex = Math.max(
         0,
         Math.min(this.focused + direction, this.items.length - 1)
       )
 
-      const relX = this.rowOffset(nextPotentionalIndex) + this.rowsX
+      const relX = this.rowX(nextPotentionalIndex) + this.rowsX
       const epgCardW = this.items[nextPotentionalIndex].width
       if (direction === 1) {
         if (relX > this.width - 276 || this.focused === nextPotentionalIndex) {
@@ -91,17 +112,17 @@ export default Blits.Component('HorizontalContainer', {
         }
       }
     },
-    rowOffset(index) {
-      return index === 0
-        ? 0
-        : this.items.slice(0, index).reduce((acc, curr) => {
-            const w = curr?.items ? curr?.items?.[0]?.width : curr?.width
+    // rowOffset(index) {
+    //   return index === 0
+    //     ? 0
+    //     : this.items.slice(0, index).reduce((acc, curr) => {
+    //         const w = curr?.items ? curr?.items?.[0]?.width : curr?.width
 
-            return acc + (w || 0) + this.gap
-          }, 0)
-    },
+    //         return acc + (w || 0) + this.gap
+    //       }, 0)
+    // },
     getMidPoint(index) {
-      const elStart = this.rowOffset(index) + this.rowsX
+      const elStart = this.rowX(index) + this.rowsX
       const epgCardW = this.items[index].width
       const elEnd = elStart + epgCardW
       if (elEnd < 0 || elStart > this.width - 276) {
@@ -123,12 +144,8 @@ export default Blits.Component('HorizontalContainer', {
       return elStart + epgCardW / 2
     },
     rowX(index) {
-      return index === 0
-        ? 0
-        : this.items.slice(0, index).reduce((acc, curr) => {
-            const w = curr?.items ? curr?.items?.width : curr?.width
-            return acc + (w || 0) + this.gap
-          }, 0)
+      const item = this.items[index]
+      return this.timeToX(new Date(item.data.start))
     },
   },
   input: {

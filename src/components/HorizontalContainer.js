@@ -61,7 +61,6 @@ export default Blits.Component('HorizontalContainer', {
     },
     focused(value) {
       const focusItem = this.$select(`list-item-${value}`)
-      console.log('asdf focXXX: ', this.$select(`list-item-${4}`))
       if (focusItem && focusItem.$focus) {
         focusItem.$focus()
         this.scroll()
@@ -92,7 +91,6 @@ export default Blits.Component('HorizontalContainer', {
     },
     // POTENCIJALNA POZICIJA x
     getFocusedAbsoluteX() {
-      console.log('asdf ABS X: ', this.rowOffset(this.focused) + this.x)
       return this.rowOffset(this.focused) + this.x
     },
 
@@ -118,15 +116,11 @@ export default Blits.Component('HorizontalContainer', {
               ? 0
               : this.padding
             : Math.min(this.focused, this.lastIndexToScroll) * this.itemTotalWidth)
-        const absX = this.getFocusedAbsoluteX()
-        console.log('ABS X:', absX)
-        console.log('asdf focusedX of hor: ', this.x)
       }
     },
   },
   hooks: {
     ready() {
-      console.log('Horizontal container ', this)
       this.x = this.padding
     },
   },
