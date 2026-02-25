@@ -7,7 +7,7 @@ Blits.Launch(App, 'app', {
   debugLevel: 1,
   defaultFont: 'InterRegular',
   inspector: true,
-  inputThrottle: 300,
+  // inputThrottle: 300,
   fonts: [
     {
       family: 'lato',

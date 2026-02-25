@@ -37,7 +37,6 @@ export default Blits.Component('VerticalContainer', {
             autoScroll="true"
             :rowsX="$rowsX"
             :visibleStartTime="$visibleStartTime"
-            :visibleEndTime="$visibleEndTime"
           />
         </Element>
       </Element>
@@ -57,15 +56,23 @@ export default Blits.Component('VerticalContainer', {
     'height',
   ],
   state() {
-    const now = Date.now()
+    const now = new Date()
+    const minutes = now.getMinutes()
+
+    if (minutes >= 30) {
+      now.setMinutes(30, 0, 0) // round down to :30
+    } else {
+      now.setMinutes(0, 0, 0) // round down to :00
+    }
+    const unixTimestampMS = Math.floor(now.getTime())
     const windowDuration = 3 * 60 * 60 * 1000
     return {
       focused: 0,
       y: 0,
       rowsX: 0,
       timeSlotItems: [],
-      visibleStartTime: now - 30 * 60 * 1000, // viewport starts 30 min before now
-      visibleEndTime: now - 30 * 60 * 1000 + windowDuration,
+      visibleStartTime: unixTimestampMS,
+      visibleEndTime: unixTimestampMS + windowDuration,
     }
   },
   watch: {
@@ -136,6 +143,13 @@ export default Blits.Component('VerticalContainer', {
     init() {
       this.$listen('scrollRows', (scrollAmount) => {
         this.rowsX += scrollAmount
+        if (scrollAmount < 0) {
+          this.visibleStartTime += 30 * 60 * 1000
+          this.visibleEndTime += 30 * 60 * 1000
+        } else {
+          this.visibleStartTime -= 30 * 60 * 1000
+          this.visibleEndTime -= 30 * 60 * 1000
+        }
       })
 
       const timelineStartMs = Date.parse(apsoluteTimelineStart) // UTC

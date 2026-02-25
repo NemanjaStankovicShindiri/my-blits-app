@@ -561,7 +561,7 @@
         "description": "Reprize i lagani sadržaji pred ponoć.",
         "subtitle": "",
         "start": "2026-02-25T23:30:00Z",
-        "stop": "2026-02-25T00:00:00Z",
+        "stop": "2026-02-26T00:00:00Z",
         "duration": 1800,
         "icon": "",
         "episode_number": "",
@@ -952,7 +952,7 @@
         "title": "7 dana",
         "description": "Kasni magazin i dnevnik tema.",
         "start": "2026-02-25T23:50:00Z",
-        "stop": "2026-02-25T00:00:00Z"
+        "stop": "2026-02-26T00:00:00Z"
       }
     ]
   },
@@ -1102,7 +1102,7 @@
         "title": "Hit Tvit Kasno",
         "description": "Kasni sat programa sa hit sadržajem.",
         "start": "2026-02-25T23:00:00Z",
-        "stop": "2026-02-25T00:00:00Z"
+        "stop": "2026-02-26T00:00:00Z"
       }
     ]
   },
@@ -1615,7 +1615,7 @@
         "description": "Filmski termin za noćne ptice.",
         "subtitle": "",
         "start": "2026-02-25T22:30:00Z",
-        "stop": "2026-02-25T00:00:00Z",
+        "stop": "2026-02-26T00:00:00Z",
         "duration": 5400,
         "icon": "",
         "episode_number": "",
@@ -1823,7 +1823,7 @@
         "title": "Stars",
         "description": "Kasni zabavni blok.",
         "start": "2026-02-25T23:30:00Z",
-        "stop": "2026-02-25T00:00:00Z"
+        "stop": "2026-02-26T00:00:00Z"
       }
     ]
   },
@@ -1989,7 +1989,7 @@
         "title": "Noćna muzika",
         "description": "Muzički hitovi do kraja dana.",
         "start": "2026-02-25T23:30:00Z",
-        "stop": "2026-02-25T00:00:00Z"
+        "stop": "2026-02-26T00:00:00Z"
       }
     ]
   }

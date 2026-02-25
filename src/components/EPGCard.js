@@ -19,7 +19,7 @@ export default Blits.Component('EPGCard', {
           font="PoppinsMedium"
           size="16"
           textoverflow="true"
-          maxwidth="$items.width - 48"
+          :maxwidth="$items.width - 48"
           maxlines="1" /><Text
           y="42.5"
           x="24"
@@ -27,7 +27,7 @@ export default Blits.Component('EPGCard', {
           size="14"
           font="PoppinsMedium"
           textoverflow="true"
-          maxwidth="$items.width - 48"
+          :maxwidth="$items.width - 48"
           maxlines="1"
       /></Element>
     </Element>`,
