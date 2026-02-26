@@ -1,7 +1,7 @@
 import Blits from '@lightningjs/blits'
 
 export default Blits.Component('EPGCard', {
-  props: ['key', 'items', 'gap'],
+  props: ['key', 'items'],
   template: `
     <Element
       :width="$items.width"

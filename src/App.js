@@ -11,7 +11,7 @@ export default Blits.Application({
     </Element>
   `,
   routes: [
-    { path: '/', component: Home },
+    { path: '/', component: EPGPage },
     {
       path: '/details/:id',
       component: Details,

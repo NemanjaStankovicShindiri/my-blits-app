@@ -29,7 +29,7 @@ export default Blits.Component('EPGPage', {
         rowH: 96,
         type: EPGHC,
         title: '',
-        gap: 8,
+        gap: 4,
         items: item.epgs.map((item) => ({
           width: this.getEpgWidth(item),
           type: EPGCard,
@@ -60,7 +60,7 @@ export default Blits.Component('EPGPage', {
       })
       this.formattedTime = startTime + ' - ' + endTime
       const duration = (stop - start) / 60000
-      const width = duration * 8.8 - 8
+      const width = duration * 8.8 - 4
       return width
     },
   },

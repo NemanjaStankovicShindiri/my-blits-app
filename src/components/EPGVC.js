@@ -155,13 +155,16 @@ export default Blits.Component('VerticalContainer', {
   hooks: {
     init() {
       this.$listen('scrollRows', (scrollAmount) => {
-        if (scrollAmount < 0 && this.visibleStartTime) {
+        if (
+          scrollAmount < 0 &&
+          this.visibleStartTime < Math.floor(new Date(apsoluteTimelineStart)) + 21 * 60 * 60 * 1000
+        ) {
           this.visibleStartTime += 30 * 60 * 1000
           this.rowsX += scrollAmount
         }
         if (
           scrollAmount > 0 &&
-          this.visibleStartTime - 30 * 60 * 1000 !== Math.floor(new Date(apsoluteTimelineStart))
+          this.visibleStartTime !== Math.floor(new Date(apsoluteTimelineStart))
         ) {
           this.visibleStartTime -= 30 * 60 * 1000
           this.rowsX += scrollAmount

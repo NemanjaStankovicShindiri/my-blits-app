@@ -12,8 +12,8 @@ export default Blits.Component('HorizontalContainer', {
         :effects="[
     { type: 'radius', props: { radius: 8 } },
       ]" />
-      <Element x="276" clipping="true" width="$width - 276" height="$height">
-        <Element :x="$rowsX" ref="container" :gap="$gap">
+      <Element x="268" clipping="true" width="$width - 268" height="$height">
+        <Element :x="$rowsX" ref="container">
           <Component
             :for="(item, index) in $items"
             is="$item.type"
@@ -21,7 +21,6 @@ export default Blits.Component('HorizontalContainer', {
             :ref="'list-item-'+$index"
             :key="$index"
             :items="$item.items ? $item.items : $item"
-            :gap="$gap"
           /> </Element></Element
     ></Element>
   `,
@@ -86,8 +85,8 @@ export default Blits.Component('HorizontalContainer', {
       const pixelsPerMinute = 8.8
       item.width =
         programStart < this.viewportStartTime && programStop > this.viewportStartTime
-          ? ((programStop - this.viewportStartTime) / 60000) * pixelsPerMinute - 8
-          : ((programStop - programStart) / 60000) * 8.8 - 8
+          ? ((programStop - this.viewportStartTime) / 60000) * pixelsPerMinute - this.gap
+          : ((programStop - programStart) / 60000) * 8.8 - this.gap
 
       const minutesFromStart =
         programStart < this.viewportStartTime && programStop > this.viewportStartTime
