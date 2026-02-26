@@ -72,7 +72,6 @@ export default Blits.Component('VerticalContainer', {
       rowsX: 0,
       timeSlotItems: [],
       visibleStartTime: unixTimestampMS,
-      visibleEndTime: unixTimestampMS + windowDuration,
     }
   },
   watch: {
@@ -156,13 +155,16 @@ export default Blits.Component('VerticalContainer', {
   hooks: {
     init() {
       this.$listen('scrollRows', (scrollAmount) => {
-        this.rowsX += scrollAmount
-        if (scrollAmount < 0) {
+        if (scrollAmount < 0 && this.visibleStartTime) {
           this.visibleStartTime += 30 * 60 * 1000
-          this.visibleEndTime += 30 * 60 * 1000
-        } else {
+          this.rowsX += scrollAmount
+        }
+        if (
+          scrollAmount > 0 &&
+          this.visibleStartTime - 30 * 60 * 1000 !== Math.floor(new Date(apsoluteTimelineStart))
+        ) {
           this.visibleStartTime -= 30 * 60 * 1000
-          this.visibleEndTime -= 30 * 60 * 1000
+          this.rowsX += scrollAmount
         }
       })
 
