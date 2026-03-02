@@ -1,6 +1,7 @@
 // @ts-nocheck
 import Blits from '@lightningjs/blits'
 import timelineStart from '../utils/timlineStart'
+import { EPG_LAYOUT } from '../utils/EPG_LAYOUT'
 
 export default Blits.Component('HorizontalContainer', {
   template: `
@@ -12,7 +13,7 @@ export default Blits.Component('HorizontalContainer', {
         :effects="[
     { type: 'radius', props: { radius: 8 } },
       ]" />
-      <Element x="268" clipping="true" width="$width - 268" height="$height">
+      <Element x="264" clipping="true" width="$width - 264" height="$height">
         <Element :x="$rowsX" ref="container">
           <Component
             :for="(item, index) in $items"
@@ -25,18 +26,12 @@ export default Blits.Component('HorizontalContainer', {
     ></Element>
   `,
   props: [
-    'autoScroll',
-    'autoscrollOffset',
-    'itemOffset',
     'items',
-    'looping',
     { key: 'width', default: 1770 },
-    'title',
     {
       key: 'gap',
-      default: 50,
+      default: 4,
     },
-    { key: 'containerBorder', default: false },
     { key: 'padding', default: 0 },
     'rowsX',
     'height',
@@ -47,6 +42,8 @@ export default Blits.Component('HorizontalContainer', {
     return {
       focused: 0,
       viewportStartTime: this.visibleStartTime,
+      lastKeyTime: 0,
+      throttleMs: 150,
     }
   },
   watch: {
@@ -65,36 +62,36 @@ export default Blits.Component('HorizontalContainer', {
   },
   hooks: {
     init() {
-      const nowUtc = Date.now()
-
+      const nowUtc = new Date('2026-03-02T12:00:00Z').getTime()
       const indexToFocus = this.items.findIndex((item) => {
         const start = Date.parse(item.data.start)
         const stop = Date.parse(item.data.stop)
-
         return start <= nowUtc && stop >= nowUtc
       })
-
       this.focused = indexToFocus
     },
   },
   methods: {
     timeToX(item) {
+      const { MINUTE_WIDTH, MIN_TO_MS } = EPG_LAYOUT
       const timelineStartData = new Date(timelineStart)
       const programStart = new Date(item.data.start)
       const programStop = new Date(item.data.stop)
-      const pixelsPerMinute = 8.8
+      const pixelsPerMinute = MINUTE_WIDTH
       item.width =
         programStart < this.viewportStartTime && programStop > this.viewportStartTime
-          ? ((programStop - this.viewportStartTime) / 60000) * pixelsPerMinute - this.gap
-          : ((programStop - programStart) / 60000) * 8.8 - this.gap
+          ? ((programStop - this.viewportStartTime) / MIN_TO_MS) * pixelsPerMinute - this.gap
+          : ((programStop - programStart) / MIN_TO_MS) * MINUTE_WIDTH - this.gap
 
       const minutesFromStart =
         programStart < this.viewportStartTime && programStop > this.viewportStartTime
-          ? (this.viewportStartTime - timelineStartData) / 60000
-          : (programStart - timelineStartData) / 60000
+          ? (this.viewportStartTime - timelineStartData) / MIN_TO_MS
+          : (programStart - timelineStartData) / MIN_TO_MS
       return minutesFromStart * pixelsPerMinute
     },
-    changeFocus(direction) {
+    _changeFocus(direction) {
+      const { MINUTE_WIDTH, SLOT_MIN } = EPG_LAYOUT
+      const timeSlotWidth = MINUTE_WIDTH * SLOT_MIN
       this.viewportStartTime = this.visibleStartTime
       const nextPotentionalIndex = Math.max(
         0,
@@ -104,8 +101,7 @@ export default Blits.Component('HorizontalContainer', {
       const epgCardW = this.items[nextPotentionalIndex].width
       if (direction === 1) {
         if (relX > this.width - 276 || this.focused === nextPotentionalIndex) {
-          //drugo
-          this.$emit('scrollRows', -264)
+          this.$emit('scrollRows', -timeSlotWidth)
         } else {
           this.focused = nextPotentionalIndex
         }
@@ -113,7 +109,7 @@ export default Blits.Component('HorizontalContainer', {
         if (relX + epgCardW + this.gap >= 0.00001 && this.focused !== 0) {
           this.focused = nextPotentionalIndex
         } else {
-          this.$emit('scrollRows', 264)
+          this.$emit('scrollRows', timeSlotWidth)
         }
       }
     },
@@ -144,13 +140,20 @@ export default Blits.Component('HorizontalContainer', {
       const item = this.items[index]
       return this.timeToX(item)
     },
+    throttledMove(direction) {
+      const now = Date.now()
+      if (now - this.lastKeyTime < this.throttleMs) return
+
+      this.lastKeyTime = now
+      this._changeFocus(direction)
+    },
   },
   input: {
     left() {
-      this.changeFocus(-1)
+      this.throttledMove(-1)
     },
     right() {
-      this.changeFocus(1)
+      this.throttledMove(1)
     },
   },
 })

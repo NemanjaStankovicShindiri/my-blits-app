@@ -1,8 +1,8 @@
-import epgData from '../api/services/epgResponse.json'
+import epgData from '../api/services/epg.json'
 import epgSingleData from '../api/services/epgSingleChannelResponse.json'
 
-export function getEpg() {
-  return epgData
+export function getEpg(date) {
+  return epgData.filter((item) => item.date === date)
 }
 
 export function getSingleEpg() {

@@ -11,50 +11,43 @@ export default Blits.Component('EPGCard', {
     { type: 'radius', props: { radius: 8 } },
       ]"
     >
-      <Element
+      <Element :show="($items.width - $paddingX)> 30"
         ><Text
           x="24"
           y="19.5"
-          :content="$items.width-24>30?$formattedTime:''"
+          :content="$formattedTime"
           font="PoppinsMedium"
           size="16"
           textoverflow="true"
-          :maxwidth="$items.width - 48"
+          :maxwidth="$items.width - 2 * $paddingX"
           maxlines="1" /><Text
           y="42.5"
           x="24"
-          :content="$items.width-24>30?$items.data.title:''"
+          :content="$formattedTime"
           size="14"
           font="PoppinsMedium"
           textoverflow="true"
-          :maxwidth="$items.width - 48"
+          :maxwidth="$items.width - 2 * $paddingX"
           maxlines="1"
       /></Element>
     </Element>`,
   state() {
     return {
       formattedTime: '',
+      paddingX: 24,
     }
   },
   hooks: {
     ready() {
-      const start = new Date(this.items.data.start)
-      const stop = new Date(this.items.data.stop)
+      const timeFormatter = new Intl.DateTimeFormat('sr-RS', {
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false,
+        timeZone: 'UTC',
+      })
 
-      this.formattedTime =
-        start.toLocaleTimeString('sr-RS', {
-          hour: '2-digit',
-          minute: '2-digit',
-          hour12: false,
-          timeZone: 'UTC',
-        }) +
-        ' - ' +
-        stop.toLocaleTimeString('sr-RS', {
-          hour: '2-digit',
-          minute: '2-digit',
-          hour12: false,
-          timeZone: 'UTC',
-        })
+      const formatTime = (iso) => timeFormatter.format(new Date(iso))
+      this.formattedTime = `${formatTime(this.items.data.start)} - ${formatTime(this.items.data.stop)}`
     },
   },
 })

@@ -7,14 +7,14 @@ import { getEpg } from '../api/epgMock'
 import EPGCard from '../components/EPGCard'
 import EPGHC from '../components/EPGHC'
 import EPGVC from '../components/EPGVC'
+import { EPG_LAYOUT } from '../utils/EPG_LAYOUT'
 
 export default Blits.Component('EPGPage', {
   components: {
     EPGVC,
-    EPGHC,
   },
   template: `
-    <Element w="1920" h="1080" :src="$src">
+    <Element w="1920" h="1080">
       <EPGVC :items="$data" ref="EPGVC" width="1824" height="605" x="96" y="475" />
     </Element>
   `,
@@ -23,20 +23,19 @@ export default Blits.Component('EPGPage', {
   },
   hooks: {
     init() {
-      const res = getEpg()
+      const res = getEpg('2026-03-02')
 
-      const rowData = res.map((item) => ({
+      this.data = res.map((item) => ({
         rowH: 96,
         type: EPGHC,
-        title: '',
-        gap: 4,
+        rowGap: 4,
+        itemsGap: 4,
         items: item.epgs.map((item) => ({
           width: this.getEpgWidth(item),
           type: EPGCard,
           data: item,
         })),
       }))
-      this.data = rowData
     },
     ready() {
       this.$select('EPGVC').$focus()
@@ -46,21 +45,8 @@ export default Blits.Component('EPGPage', {
     getEpgWidth(item) {
       const start = new Date(item.start)
       const stop = new Date(item.stop)
-      const startTime = start.toLocaleTimeString('sr-RS', {
-        hour: '2-digit',
-        minute: '2-digit',
-        hour12: false,
-        timeZone: 'UTC',
-      })
-      const endTime = stop.toLocaleTimeString('sr-RS', {
-        hour: '2-digit',
-        minute: '2-digit',
-        hour12: false,
-        timeZone: 'UTC',
-      })
-      this.formattedTime = startTime + ' - ' + endTime
       const duration = (stop - start) / 60000
-      const width = duration * 8.8 - 4
+      const width = Math.max(0, duration * EPG_LAYOUT.MINUTE_WIDTH - 4)
       return width
     },
   },
