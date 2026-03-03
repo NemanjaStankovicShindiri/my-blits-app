@@ -170,13 +170,22 @@ export default Blits.Component('VerticalContainer', {
       const timelineStartMs = Date.parse(apsoluteTimelineStart)
       let timelineEndMs = timelineStartMs + 21 * 60 * MIN_TO_MS
       this.$listen('scrollRows', (scrollAmount) => {
+        console.log(
+          'nesto',
+          this.visibleStartTime,
+          timelineEndMs,
+          this.visibleStartTime >= timelineEndMs
+        )
         if (scrollAmount < 0) {
           if (this.visibleStartTime >= timelineEndMs) {
-            this.parent.loadMoreData(1)
-            timelineEndMs = timelineEndMs + 24 * 60 * MIN_TO_MS //za sad
+            if (this.parent.loadMoreData(1)) {
+              timelineEndMs = timelineEndMs + 24 * 60 * MIN_TO_MS
+              console.log('nesto novi timelineEndMs', timelineEndMs)
+            }
+          } else {
+            this.visibleStartTime += 30 * MIN_TO_MS
+            this.rowsX += scrollAmount
           }
-          this.visibleStartTime += 30 * MIN_TO_MS
-          this.rowsX += scrollAmount
         }
         if (scrollAmount > 0 && this.visibleStartTime !== timelineStartMs) {
           this.visibleStartTime -= 30 * MIN_TO_MS

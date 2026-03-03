@@ -51,7 +51,7 @@ export default Blits.Component('EPGPage', {
     },
     loadMoreData(addDay) {
       const res = getEpg(this.getDate(addDay))
-
+      if (res.length === 0) return false
       this.data = this.data.map((item) => {
         const channelData = res.find((r) => r.channel_id === item.channel_id)
 
@@ -67,6 +67,7 @@ export default Blits.Component('EPGPage', {
           ],
         }
       })
+      return true
     },
     getEpgWidth(item) {
       const start = new Date(item.start)
