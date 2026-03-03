@@ -15,13 +15,17 @@ export default Blits.Component('EPGPage', {
   },
   template: `
     <Element w="1920" h="1080">
+      <Element w="300" h="100"><Text size="100" color="red" :content="$fps" /></Element>
       <EPGVC :items="$data" ref="EPGVC" width="1824" height="605" x="96" y="475" />
     </Element>
   `,
   state() {
-    return { data: [], currentDate: '2026-03-02' }
+    return { data: [], currentDate: '2026-03-02', fps: 0 }
   },
   hooks: {
+    fpsUpdate(fps) {
+      this.fps = fps
+    },
     init() {
       const res = getEpg(this.currentDate)
 
