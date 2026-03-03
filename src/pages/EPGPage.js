@@ -19,21 +19,22 @@ export default Blits.Component('EPGPage', {
     </Element>
   `,
   state() {
-    return { data: [] }
+    return { data: [], currentDate: '2026-03-02' }
   },
   hooks: {
     init() {
-      const res = getEpg('2026-03-02')
+      const res = getEpg(this.currentDate)
 
       this.data = res.map((item) => ({
+        channel_id: item.channel_id,
         rowH: 96,
         type: EPGHC,
         rowGap: 4,
         itemsGap: 4,
-        items: item.epgs.map((item) => ({
-          width: this.getEpgWidth(item),
+        items: item.epgs.map((epg) => ({
+          width: this.getEpgWidth(epg),
           type: EPGCard,
-          data: item,
+          data: epg,
         })),
       }))
     },
@@ -42,6 +43,31 @@ export default Blits.Component('EPGPage', {
     },
   },
   methods: {
+    getDate(addDay) {
+      const date = new Date(this.currentDate + 'T00:00:00Z')
+      date.setUTCDate(date.getUTCDate() + addDay)
+      this.currentDate = date.toISOString().slice(0, 10)
+      return date.toISOString().slice(0, 10)
+    },
+    loadMoreData(addDay) {
+      const res = getEpg(this.getDate(addDay))
+
+      this.data = this.data.map((item) => {
+        const channelData = res.find((r) => r.channel_id === item.channel_id)
+
+        return {
+          ...item,
+          items: [
+            ...item.items,
+            ...(channelData?.epgs.map((epg) => ({
+              width: this.getEpgWidth(epg),
+              type: EPGCard,
+              data: epg,
+            })) || []),
+          ],
+        }
+      })
+    },
     getEpgWidth(item) {
       const start = new Date(item.start)
       const stop = new Date(item.stop)

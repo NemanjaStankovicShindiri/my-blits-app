@@ -4,6 +4,7 @@ import EPGTimeSlot from './EPGTimeSlot'
 import EPGHC from './EPGHC'
 import apsoluteTimelineStart from '../utils/timlineStart'
 import { EPG_LAYOUT } from '../utils/EPG_LAYOUT'
+import { getEpg } from '../api/epgMock'
 
 export default Blits.Component('VerticalContainer', {
   components: { EPGHC },
@@ -61,6 +62,9 @@ export default Blits.Component('VerticalContainer', {
       if (focusItem && focusItem.$focus) {
         focusItem.$focus()
       }
+    },
+    items(newValue, oldValue) {
+      console.log(newValue)
     },
   },
   methods: {
@@ -122,7 +126,7 @@ export default Blits.Component('VerticalContainer', {
     createTimeSlots(timelineStartMs) {
       const { MIN_TO_MS, MINUTE_WIDTH, SLOT_MIN } = EPG_LAYOUT
       const slots = []
-      const SLOT_COUNT = (24 * 60) / SLOT_MIN
+      const SLOT_COUNT = (144 * 60) / SLOT_MIN
       const slotMs = SLOT_MIN * MIN_TO_MS
       for (let i = 0; i < SLOT_COUNT; i++) {
         const startTime = new Date(timelineStartMs + i * slotMs)
@@ -164,9 +168,13 @@ export default Blits.Component('VerticalContainer', {
     init() {
       const { MIN_TO_MS, MINUTE_WIDTH } = EPG_LAYOUT
       const timelineStartMs = Date.parse(apsoluteTimelineStart)
-      const timelineEndMs = timelineStartMs + 21 * 60 * MIN_TO_MS
+      let timelineEndMs = timelineStartMs + 21 * 60 * MIN_TO_MS
       this.$listen('scrollRows', (scrollAmount) => {
-        if (scrollAmount < 0 && this.visibleStartTime < timelineEndMs) {
+        if (scrollAmount < 0) {
+          if (this.visibleStartTime >= timelineEndMs) {
+            this.parent.loadMoreData(1)
+            timelineEndMs = timelineEndMs + 24 * 60 * MIN_TO_MS //za sad
+          }
           this.visibleStartTime += 30 * MIN_TO_MS
           this.rowsX += scrollAmount
         }

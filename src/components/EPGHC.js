@@ -98,6 +98,7 @@ export default Blits.Component('HorizontalContainer', {
         Math.min(this.focused + direction, this.items.length - 1)
       )
       const relX = this.rowX(nextPotentionalIndex) + this.rowsX
+      console.log('relX ', relX)
       const epgCardW = this.items[nextPotentionalIndex].width
       if (direction === 1) {
         if (relX > this.width - 276 || this.focused === nextPotentionalIndex) {

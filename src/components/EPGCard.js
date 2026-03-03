@@ -23,7 +23,7 @@ export default Blits.Component('EPGCard', {
           maxlines="1" /><Text
           y="42.5"
           x="24"
-          :content="$formattedTime"
+          :content="$items.data.title"
           size="14"
           font="PoppinsMedium"
           textoverflow="true"
