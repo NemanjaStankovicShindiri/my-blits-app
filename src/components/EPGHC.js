@@ -1,6 +1,5 @@
 // @ts-nocheck
 import Blits from '@lightningjs/blits'
-import timelineStart from '../utils/timlineStart'
 import { EPG_LAYOUT } from '../utils/EPG_LAYOUT'
 
 export default Blits.Component('HorizontalContainer', {
@@ -19,8 +18,9 @@ export default Blits.Component('HorizontalContainer', {
             :for="(item, index) in $items"
             is="$item.type"
             :x="$rowX($index)"
+            :show="$showEl($item)"
             :ref="'list-item-'+$index"
-            :key="$index"
+            :key="$item.key"
             :items="$item.items ? $item.items : $item"
           /> </Element></Element
     ></Element>
@@ -37,13 +37,16 @@ export default Blits.Component('HorizontalContainer', {
     'height',
     'rowH',
     'visibleStartTime',
+    'timelineStart',
   ],
   state() {
     return {
       focused: 0,
       viewportStartTime: this.visibleStartTime,
+      viewportEndOffset: Math.floor(((this.width - 264) / 8.8) * EPG_LAYOUT.MIN_TO_MS),
       lastKeyTime: 0,
       throttleMs: 150,
+      epgContentWidth: this.width - 264,
     }
   },
   watch: {
@@ -74,20 +77,18 @@ export default Blits.Component('HorizontalContainer', {
   methods: {
     timeToX(item) {
       const { MINUTE_WIDTH, MIN_TO_MS } = EPG_LAYOUT
-      const timelineStartData = new Date(timelineStart)
       const programStart = new Date(item.data.start)
       const programStop = new Date(item.data.stop)
-      const pixelsPerMinute = MINUTE_WIDTH
       item.width =
         programStart < this.viewportStartTime && programStop > this.viewportStartTime
-          ? ((programStop - this.viewportStartTime) / MIN_TO_MS) * pixelsPerMinute - this.gap
+          ? ((programStop - this.viewportStartTime) / MIN_TO_MS) * MINUTE_WIDTH - this.gap
           : ((programStop - programStart) / MIN_TO_MS) * MINUTE_WIDTH - this.gap
 
       const minutesFromStart =
         programStart < this.viewportStartTime && programStop > this.viewportStartTime
-          ? (this.viewportStartTime - timelineStartData) / MIN_TO_MS
-          : (programStart - timelineStartData) / MIN_TO_MS
-      return minutesFromStart * pixelsPerMinute
+          ? (this.viewportStartTime - this.timelineStart) / MIN_TO_MS
+          : (programStart - this.timelineStart) / MIN_TO_MS
+      return minutesFromStart * MINUTE_WIDTH
     },
     _changeFocus(direction) {
       const { MINUTE_WIDTH, SLOT_MIN } = EPG_LAYOUT
@@ -98,10 +99,9 @@ export default Blits.Component('HorizontalContainer', {
         Math.min(this.focused + direction, this.items.length - 1)
       )
       const relX = this.rowX(nextPotentionalIndex) + this.rowsX
-      console.log('relX ', relX)
       const epgCardW = this.items[nextPotentionalIndex].width
       if (direction === 1) {
-        if (relX > this.width - 276 || this.focused === nextPotentionalIndex) {
+        if (relX > this.epgContentWidth || this.focused === nextPotentionalIndex) {
           this.$emit('scrollRows', -timeSlotWidth)
         } else {
           this.focused = nextPotentionalIndex
@@ -119,20 +119,16 @@ export default Blits.Component('HorizontalContainer', {
       const elStart = this.rowX(index) + this.rowsX
       const epgCardW = this.items[index].width
       const elEnd = elStart + epgCardW
-      if (elEnd < 0 || elStart > this.width - 276) {
-        //van viewport-a
+      if (elEnd < 0 || elStart > this.epgContentWidth) {
         return null
       }
-      if (elStart < 0 && elEnd > this.width - 276) {
-        //prostire se preko celog ekrana
-        return (this.width - 276) / 2
+      if (elStart < 0 && elEnd > this.epgContentWidth) {
+        return this.epgContentWidth / 2
       }
-      if (elEnd > this.width - 276) {
-        //sece desnu ivicu
-        return (this.width - 276 - elStart) / 2 + elStart
+      if (elEnd > this.epgContentWidth) {
+        return (this.epgContentWidth - elStart) / 2 + elStart
       }
       if (elStart < 0) {
-        //sece levu ivicu
         return elEnd / 2
       }
       return elStart + epgCardW / 2
@@ -140,6 +136,14 @@ export default Blits.Component('HorizontalContainer', {
     rowX(index) {
       const item = this.items[index]
       return this.timeToX(item)
+    },
+    showEl(item) {
+      const programEndTime = Date.parse(item.data.stop)
+      const programStartTime = Date.parse(item.data.start)
+      return (
+        programEndTime > this.viewportStartTime &&
+        programStartTime < this.viewportStartTime + this.viewportEndOffset
+      )
     },
     throttledMove(direction) {
       const now = Date.now()

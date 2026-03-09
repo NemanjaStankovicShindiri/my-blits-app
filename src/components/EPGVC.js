@@ -4,13 +4,22 @@ import EPGTimeSlot from './EPGTimeSlot'
 import EPGHC from './EPGHC'
 import apsoluteTimelineStart from '../utils/timlineStart'
 import { EPG_LAYOUT } from '../utils/EPG_LAYOUT'
-import { getEpg } from '../api/epgMock'
 
 export default Blits.Component('VerticalContainer', {
   components: { EPGHC },
   template: `
     <Element :width="$width" :height="$height" clipping="true">
-      <EPGHC gap="4" rowH="48" :items="$timeSlotItems" :rowsX="$rowsX" key="-1" width="$width" height="52" />
+      <EPGHC
+        gap="4"
+        rowH="48"
+        :items="$timeSlotItems"
+        :rowsX="$rowsX"
+        key="-1"
+        width="$width"
+        height="52"
+        :visibleStartTime="$visibleStartTime"
+        :timelineStart="$timelineStart"
+      />
       <Element y="52" clipping="true" :width="$width" :height="$height - 56">
         <Element :y="$y">
           <Component
@@ -20,13 +29,14 @@ export default Blits.Component('VerticalContainer', {
             is="$item.type"
             :y="$rowOffset($index)"
             :ref="'list-item-'+$index"
-            :key="$index"
+            :key="$item.key"
             :items="$item.items ? $item.items : $item"
             title="$item.title"
             width="$width || 1770"
             :gap="$item.itemsGap || 4"
             :rowsX="$rowsX"
             :visibleStartTime="$visibleStartTime"
+            :timelineStart="$timelineStart"
           />
         </Element>
       </Element>
@@ -49,6 +59,7 @@ export default Blits.Component('VerticalContainer', {
       rowsX: 0,
       timeSlotItems: [],
       visibleStartTime: unixTimestampMS,
+      timelineStart: Date.parse(apsoluteTimelineStart),
       lastKeyTime: 0,
       throttleMs: 150,
     }
@@ -63,8 +74,8 @@ export default Blits.Component('VerticalContainer', {
         focusItem.$focus()
       }
     },
-    items(newValue, oldValue) {
-      console.log(newValue)
+    visibleStartTime() {
+      this.timeSlotItems = this.createTimeSlots(this.visibleStartTime)
     },
   },
   methods: {
@@ -123,21 +134,23 @@ export default Blits.Component('VerticalContainer', {
             .slice(0, index)
             .reduce((acc, curr) => acc + curr?.rowGap + (curr?.rowH ? curr?.rowH : curr.height), 0)
     },
-    createTimeSlots(timelineStartMs) {
+    createTimeSlots(startTimeMs) {
       const { MIN_TO_MS, MINUTE_WIDTH, SLOT_MIN } = EPG_LAYOUT
+
       const slots = []
-      const SLOT_COUNT = (144 * 60) / SLOT_MIN
       const slotMs = SLOT_MIN * MIN_TO_MS
-      for (let i = 0; i < SLOT_COUNT; i++) {
-        const startTime = new Date(timelineStartMs + i * slotMs)
-        const stopTime = new Date(startTime.getTime() + slotMs)
+
+      for (let i = 0; i < 6; i++) {
+        const start = startTimeMs + i * slotMs
+        const startTime = new Date(start)
+        const stopTime = new Date(start + slotMs)
 
         const sh = startTime.getUTCHours().toString().padStart(2, '0')
         const sm = startTime.getUTCMinutes().toString().padStart(2, '0')
 
         slots.push({
           type: EPGTimeSlot,
-          width: slotMs * MINUTE_WIDTH - 4,
+          width: SLOT_MIN * MINUTE_WIDTH - 4,
           data: {
             title: `${sh}:${sm}`,
             start: startTime,
@@ -167,8 +180,12 @@ export default Blits.Component('VerticalContainer', {
   hooks: {
     init() {
       const { MIN_TO_MS, MINUTE_WIDTH } = EPG_LAYOUT
-      const timelineStartMs = Date.parse(apsoluteTimelineStart)
-      let timelineEndMs = timelineStartMs + 21 * 60 * MIN_TO_MS
+      let timelineEndMs = this.timelineStart + 21 * 60 * MIN_TO_MS
+      const deltaMin = (this.visibleStartTime - this.timelineStart) / MIN_TO_MS
+      this.rowsX = -deltaMin * MINUTE_WIDTH
+
+      this.timeSlotItems = this.createTimeSlots(this.visibleStartTime)
+
       this.$listen('scrollRows', (scrollAmount) => {
         if (scrollAmount < 0) {
           if (this.visibleStartTime >= timelineEndMs) {
@@ -192,11 +209,6 @@ export default Blits.Component('VerticalContainer', {
           this.rowsX += scrollAmount
         }
       })
-      const deltaMin = (this.visibleStartTime - timelineStartMs) / MIN_TO_MS
-      this.rowsX = -deltaMin * MINUTE_WIDTH
-
-      const slots = this.createTimeSlots(timelineStartMs)
-      this.timeSlotItems = slots
     },
   },
 })
