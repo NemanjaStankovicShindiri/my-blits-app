@@ -15,13 +15,12 @@ export default Blits.Component('HorizontalContainer', {
       <Element x="264" clipping="true" width="$width - 264" height="$height">
         <Element :x="$rowsX" ref="container">
           <Component
-            :for="(item, index) in $items"
+            :for="(item) in $cardPool"
             is="$item.type"
-            :x="$rowX($index)"
-            :show="$showEl($item)"
-            :ref="'list-item-'+$index"
-            :key="$item.key"
-            :items="$item.items ? $item.items : $item"
+            :x="$item.x"
+            :ref="'list-item-'+$item.globalIndex"
+            :items="$item.items"
+            key="$item.key"
           /> </Element></Element
     ></Element>
   `,
@@ -42,16 +41,16 @@ export default Blits.Component('HorizontalContainer', {
   state() {
     return {
       focused: 0,
-      viewportStartTime: this.visibleStartTime,
       viewportEndOffset: Math.floor(((this.width - 264) / 8.8) * EPG_LAYOUT.MIN_TO_MS),
       lastKeyTime: 0,
       throttleMs: 150,
       epgContentWidth: this.width - 264,
+      cardPool: [],
     }
   },
   watch: {
     visibleStartTime() {
-      this.viewportStartTime = this.visibleStartTime
+      this.updateVisibleItems()
     },
     hasFocus(isFocused) {
       if (isFocused) this.$trigger('focused')
@@ -66,34 +65,95 @@ export default Blits.Component('HorizontalContainer', {
   hooks: {
     init() {
       const nowUtc = new Date('2026-03-02T12:00:00Z').getTime()
-      const indexToFocus = this.items.findIndex((item) => {
-        const start = Date.parse(item.data.start)
-        const stop = Date.parse(item.data.stop)
-        return start <= nowUtc && stop >= nowUtc
-      })
-      this.focused = indexToFocus
+      for (let i = 0; i < this.items.length; i++) {
+        const currentItem = this.items[i]
+        currentItem.globalIndex = i
+        const start = Date.parse(currentItem.data.start)
+        const stop = Date.parse(currentItem.data.stop)
+
+        if (start <= nowUtc && stop > nowUtc) {
+          this.focused = i
+        }
+      }
+      this.updateVisibleItems()
     },
   },
   methods: {
+    updateVisibleItems() {
+      const start = this.visibleStartTime
+      const end = start + this.viewportEndOffset
+
+      let poolIndex = 0
+      let visible = []
+      for (let i = 0; i < this.items.length; i++) {
+        const item = this.items[i]
+
+        const programStart = Date.parse(item.data.start)
+        const programEnd = Date.parse(item.data.stop)
+
+        if (programEnd > start && programStart < end) {
+          visible.push({
+            ...this.cardPool[poolIndex],
+            x: this.timeToX(item),
+            items: {
+              width: this.getItemWidth(item),
+              data: item.data,
+            },
+            key: item.key,
+            type: item.type,
+          })
+          poolIndex++
+        }
+        if (programStart > end) break
+      }
+      this.cardPool = visible
+      console.log('asdf', poolIndex, JSON.parse(JSON.stringify(this.cardPool)))
+    },
     timeToX(item) {
       const { MINUTE_WIDTH, MIN_TO_MS } = EPG_LAYOUT
       const programStart = new Date(item.data.start)
       const programStop = new Date(item.data.stop)
-      item.width =
-        programStart < this.viewportStartTime && programStop > this.viewportStartTime
-          ? ((programStop - this.viewportStartTime) / MIN_TO_MS) * MINUTE_WIDTH - this.gap
-          : ((programStop - programStart) / MIN_TO_MS) * MINUTE_WIDTH - this.gap
-
-      const minutesFromStart =
-        programStart < this.viewportStartTime && programStop > this.viewportStartTime
-          ? (this.viewportStartTime - this.timelineStart) / MIN_TO_MS
-          : (programStart - this.timelineStart) / MIN_TO_MS
+      let minutesFromStart = 0
+      if (programStart < this.visibleStartTime && programStop > this.visibleStartTime) {
+        minutesFromStart = (this.visibleStartTime - this.timelineStart) / MIN_TO_MS
+      } else {
+        minutesFromStart = (programStart - this.timelineStart) / MIN_TO_MS
+      }
       return minutesFromStart * MINUTE_WIDTH
     },
+    getItemWidth(item) {
+      if (item.key === '119_2026-03-02T14:00:00Z') {
+        console.log('object')
+      }
+      const { MINUTE_WIDTH, MIN_TO_MS } = EPG_LAYOUT
+      const programStart = Date.parse(item.data.start)
+      const programStop = Date.parse(item.data.stop)
+      return programStart < this.visibleStartTime && programStop > this.visibleStartTime
+        ? ((programStop - this.visibleStartTime) / MIN_TO_MS) * MINUTE_WIDTH - this.gap
+        : ((programStop - programStart) / MIN_TO_MS) * MINUTE_WIDTH - this.gap
+    },
+
+    // getMidPoint(index) {
+    //   const elStart = this.rowX(index) + this.rowsX
+    //   const epgCardW = this.items[index].width
+    //   const elEnd = elStart + epgCardW
+    //   if (elEnd < 0 || elStart > this.epgContentWidth) {
+    //     return null
+    //   }
+    // if (elStart < 0 && elEnd > this.epgContentWidth) {
+    //     return this.epgContentWidth / 2
+    //   }
+    //   if (elEnd > this.epgContentWidth) {
+    //     return (this.epgContentWidth - elStart) / 2 + elStart
+    //   }
+    //   if (elStart < 0) {
+    //     return elEnd / 2
+    //   }
+    //   return elStart + epgCardW / 2
+    // },
     _changeFocus(direction) {
       const { MINUTE_WIDTH, SLOT_MIN } = EPG_LAYOUT
       const timeSlotWidth = MINUTE_WIDTH * SLOT_MIN
-      this.viewportStartTime = this.visibleStartTime
       const nextPotentionalIndex = Math.max(
         0,
         Math.min(this.focused + direction, this.items.length - 1)
@@ -114,41 +174,13 @@ export default Blits.Component('HorizontalContainer', {
         }
       }
     },
-
-    getMidPoint(index) {
-      const elStart = this.rowX(index) + this.rowsX
-      const epgCardW = this.items[index].width
-      const elEnd = elStart + epgCardW
-      if (elEnd < 0 || elStart > this.epgContentWidth) {
-        return null
-      }
-      if (elStart < 0 && elEnd > this.epgContentWidth) {
-        return this.epgContentWidth / 2
-      }
-      if (elEnd > this.epgContentWidth) {
-        return (this.epgContentWidth - elStart) / 2 + elStart
-      }
-      if (elStart < 0) {
-        return elEnd / 2
-      }
-      return elStart + epgCardW / 2
-    },
     rowX(index) {
       const item = this.items[index]
       return this.timeToX(item)
     },
-    showEl(item) {
-      const programEndTime = Date.parse(item.data.stop)
-      const programStartTime = Date.parse(item.data.start)
-      return (
-        programEndTime > this.viewportStartTime &&
-        programStartTime < this.viewportStartTime + this.viewportEndOffset
-      )
-    },
     throttledMove(direction) {
       const now = Date.now()
       if (now - this.lastKeyTime < this.throttleMs) return
-
       this.lastKeyTime = now
       this._changeFocus(direction)
     },

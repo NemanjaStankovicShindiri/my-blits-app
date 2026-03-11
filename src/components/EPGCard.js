@@ -1,7 +1,7 @@
 import Blits from '@lightningjs/blits'
 
 export default Blits.Component('EPGCard', {
-  props: ['key', 'items'],
+  props: ['items'],
   template: `
     <Element
       :width="$items.width"
@@ -37,8 +37,17 @@ export default Blits.Component('EPGCard', {
       paddingX: 24,
     }
   },
+  watch: {
+    items() {
+      console.group('label')
+      console.log(this.formattedTime)
+      console.log(this.items)
+      console.groupEnd()
+    },
+  },
   hooks: {
     ready() {
+      console.log('new Card')
       const timeFormatter = new Intl.DateTimeFormat('sr-RS', {
         hour: '2-digit',
         minute: '2-digit',

@@ -4,7 +4,7 @@ import App from './App.js'
 Blits.Launch(App, 'app', {
   w: 1920,
   h: 1080,
-  debugLevel: 0,
+  debugLevel: 1,
   defaultFont: 'InterRegular',
   inspector: true,
   // inputThrottle: 300,

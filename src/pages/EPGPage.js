@@ -47,6 +47,25 @@ export default Blits.Component('EPGPage', {
       this.$select('EPGVC').$focus()
     },
   },
+  watch: {
+    watch: {
+      items(newItem) {
+        console.log('object')
+        if (!newItem) return
+
+        const timeFormatter = new Intl.DateTimeFormat('sr-RS', {
+          hour: '2-digit',
+          minute: '2-digit',
+          hour12: false,
+          timeZone: 'UTC',
+        })
+
+        const formatTime = (iso) => timeFormatter.format(new Date(iso))
+
+        this.formattedTime = `${formatTime(newItem.data.start)} - ${formatTime(newItem.data.stop)}`
+      },
+    },
+  },
   methods: {
     getDate(addDay) {
       const date = new Date(this.currentDate + 'T00:00:00Z')

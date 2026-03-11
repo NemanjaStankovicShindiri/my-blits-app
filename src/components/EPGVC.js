@@ -9,17 +9,6 @@ export default Blits.Component('VerticalContainer', {
   components: { EPGHC },
   template: `
     <Element :width="$width" :height="$height" clipping="true">
-      <EPGHC
-        gap="4"
-        rowH="48"
-        :items="$timeSlotItems"
-        :rowsX="$rowsX"
-        key="-1"
-        width="$width"
-        height="52"
-        :visibleStartTime="$visibleStartTime"
-        :timelineStart="$timelineStart"
-      />
       <Element y="52" clipping="true" :width="$width" :height="$height - 56">
         <Element :y="$y">
           <Component
@@ -58,8 +47,10 @@ export default Blits.Component('VerticalContainer', {
       y: 0,
       rowsX: 0,
       timeSlotItems: [],
+      visibleEPG: [],
       visibleStartTime: unixTimestampMS,
       timelineStart: Date.parse(apsoluteTimelineStart),
+      viewportEndOffset: Math.floor(((this.width - 264) / 8.8) * EPG_LAYOUT.MIN_TO_MS),
       lastKeyTime: 0,
       throttleMs: 150,
     }
@@ -193,8 +184,8 @@ export default Blits.Component('VerticalContainer', {
               timelineEndMs = timelineEndMs + 24 * 60 * MIN_TO_MS
             }
           } else {
-            this.visibleStartTime += 30 * MIN_TO_MS
             this.rowsX += scrollAmount
+            this.visibleStartTime += 30 * MIN_TO_MS
           }
         }
         if (scrollAmount > 0) {
@@ -205,8 +196,8 @@ export default Blits.Component('VerticalContainer', {
               return
             }
           }
-          this.visibleStartTime -= 30 * MIN_TO_MS
           this.rowsX += scrollAmount
+          this.visibleStartTime -= 30 * MIN_TO_MS
         }
       })
     },
