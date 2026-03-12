@@ -201,7 +201,8 @@ export default Blits.Component('VerticalContainer', {
         if (scrollAmount > 0) {
           if (this.visibleStartTime <= this.timelineStart) {
             if (this.parent.loadMoreData(-1)) {
-              // this.timelineStart = this.timelineStart - 24 * 60 * MIN_TO_MS
+              this.timelineStart = this.timelineStart - 24 * 60 * MIN_TO_MS
+              this.rowsX -= 24 * 60 * MINUTE_WIDTH
             } else {
               return
             }

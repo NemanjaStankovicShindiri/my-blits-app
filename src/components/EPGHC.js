@@ -62,8 +62,18 @@ export default Blits.Component('HorizontalContainer', {
       }
     },
     items(newValue, oldValue) {
-      console.log('items changed in HC', this.items)
-      if (this.hasFocus) this.focused = newValue.length - oldValue.length
+      this.updateVisibleItems()
+      if (this.hasFocus) {
+        const indexInNewArray = newValue.findIndex(
+          (item) => item.key === oldValue[this.focused].key
+        )
+        if (this.focused === 0) {
+          this.focused = indexInNewArray
+        }
+        if (this.focused === oldValue.length - 1) {
+          this.focused = indexInNewArray
+        }
+      }
     },
   },
   hooks: {

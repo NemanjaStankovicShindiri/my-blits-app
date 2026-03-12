@@ -50,7 +50,6 @@ export default Blits.Component('EPGPage', {
   watch: {
     watch: {
       items(newItem) {
-        console.log('object')
         if (!newItem) return
 
         const timeFormatter = new Intl.DateTimeFormat('sr-RS', {
