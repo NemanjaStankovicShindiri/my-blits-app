@@ -97,16 +97,12 @@ export default Blits.Component('EPGPage', {
             type: EPGCard,
             data: { ...epg },
           })) || []
-        const combined =
-          addDay === 1
-            ? [...item.items.map((i) => ({ ...i })), ...newItems]
-            : [...newItems, ...item.items.map((i) => ({ ...i }))]
         return {
           ...item,
           items: addDay === 1 ? [...item.items, ...newItems] : [...newItems, ...item.items],
         }
       })
-      this.data = pom
+      this.data = [...pom]
       return true
     },
     getEpgWidth(item) {

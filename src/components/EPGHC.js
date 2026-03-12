@@ -20,7 +20,7 @@ export default Blits.Component('HorizontalContainer', {
             :x="$item.x"
             :ref="'list-item-'+$item.globalIndex"
             :items="$item.items"
-            key="$item.key"
+            key="$item.globalIndex"
           /> </Element></Element
     ></Element>
   `,
@@ -61,6 +61,10 @@ export default Blits.Component('HorizontalContainer', {
         focusItem.$focus()
       }
     },
+    items(newValue, oldValue) {
+      console.log('items changed in HC', this.items)
+      if (this.hasFocus) this.focused = newValue.length - oldValue.length
+    },
   },
   hooks: {
     init() {
@@ -100,6 +104,7 @@ export default Blits.Component('HorizontalContainer', {
               data: item.data,
             },
             key: item.key,
+            globalIndex: i,
             type: item.type,
           })
           poolIndex++
@@ -107,7 +112,6 @@ export default Blits.Component('HorizontalContainer', {
         if (programStart > end) break
       }
       this.cardPool = visible
-      console.log('asdf', poolIndex, JSON.parse(JSON.stringify(this.cardPool)))
     },
     timeToX(item) {
       const { MINUTE_WIDTH, MIN_TO_MS } = EPG_LAYOUT
@@ -122,9 +126,6 @@ export default Blits.Component('HorizontalContainer', {
       return minutesFromStart * MINUTE_WIDTH
     },
     getItemWidth(item) {
-      if (item.key === '119_2026-03-02T14:00:00Z') {
-        console.log('object')
-      }
       const { MINUTE_WIDTH, MIN_TO_MS } = EPG_LAYOUT
       const programStart = Date.parse(item.data.start)
       const programStop = Date.parse(item.data.stop)
@@ -133,24 +134,24 @@ export default Blits.Component('HorizontalContainer', {
         : ((programStop - programStart) / MIN_TO_MS) * MINUTE_WIDTH - this.gap
     },
 
-    // getMidPoint(index) {
-    //   const elStart = this.rowX(index) + this.rowsX
-    //   const epgCardW = this.items[index].width
-    //   const elEnd = elStart + epgCardW
-    //   if (elEnd < 0 || elStart > this.epgContentWidth) {
-    //     return null
-    //   }
-    // if (elStart < 0 && elEnd > this.epgContentWidth) {
-    //     return this.epgContentWidth / 2
-    //   }
-    //   if (elEnd > this.epgContentWidth) {
-    //     return (this.epgContentWidth - elStart) / 2 + elStart
-    //   }
-    //   if (elStart < 0) {
-    //     return elEnd / 2
-    //   }
-    //   return elStart + epgCardW / 2
-    // },
+    getMidPoint(index) {
+      const elStart = this.rowX(index) + this.rowsX
+      const epgCardW = this.getItemWidth(this.items[index])
+      const elEnd = elStart + epgCardW
+      if (elEnd < 0 || elStart > this.epgContentWidth) {
+        return null
+      }
+      if (elStart < 0 && elEnd > this.epgContentWidth) {
+        return this.epgContentWidth / 2
+      }
+      if (elEnd > this.epgContentWidth) {
+        return (this.epgContentWidth - elStart) / 2 + elStart
+      }
+      if (elStart < 0) {
+        return elEnd / 2
+      }
+      return elStart + epgCardW / 2
+    },
     _changeFocus(direction) {
       const { MINUTE_WIDTH, SLOT_MIN } = EPG_LAYOUT
       const timeSlotWidth = MINUTE_WIDTH * SLOT_MIN
@@ -159,7 +160,7 @@ export default Blits.Component('HorizontalContainer', {
         Math.min(this.focused + direction, this.items.length - 1)
       )
       const relX = this.rowX(nextPotentionalIndex) + this.rowsX
-      const epgCardW = this.items[nextPotentionalIndex].width
+      const epgCardW = this.getItemWidth(this.items[nextPotentionalIndex])
       if (direction === 1) {
         if (relX > this.epgContentWidth || this.focused === nextPotentionalIndex) {
           this.$emit('scrollRows', -timeSlotWidth)

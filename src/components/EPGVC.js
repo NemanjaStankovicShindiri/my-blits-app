@@ -9,6 +9,16 @@ export default Blits.Component('VerticalContainer', {
   components: { EPGHC },
   template: `
     <Element :width="$width" :height="$height" clipping="true">
+      <EPGHC
+        gap="4"
+        rowH="48"
+        :items="$timeSlotItems"
+        :rowsX="$rowsX"
+        width="$width"
+        height="52"
+        :visibleStartTime="$visibleStartTime"
+        :timelineStart="$timelineStart"
+      />
       <Element y="52" clipping="true" :width="$width" :height="$height - 56">
         <Element :y="$y">
           <Component
@@ -131,7 +141,7 @@ export default Blits.Component('VerticalContainer', {
       const slots = []
       const slotMs = SLOT_MIN * MIN_TO_MS
 
-      for (let i = 0; i < 6; i++) {
+      for (let i = -1; i < 7; i++) {
         const start = startTimeMs + i * slotMs
         const startTime = new Date(start)
         const stopTime = new Date(start + slotMs)
@@ -142,6 +152,7 @@ export default Blits.Component('VerticalContainer', {
         slots.push({
           type: EPGTimeSlot,
           width: SLOT_MIN * MINUTE_WIDTH - 4,
+          globalIndex: startTime,
           data: {
             title: `${sh}:${sm}`,
             start: startTime,
@@ -149,7 +160,6 @@ export default Blits.Component('VerticalContainer', {
           },
         })
       }
-
       return slots
     },
     throttledMove(direction) {
@@ -191,7 +201,7 @@ export default Blits.Component('VerticalContainer', {
         if (scrollAmount > 0) {
           if (this.visibleStartTime <= this.timelineStart) {
             if (this.parent.loadMoreData(-1)) {
-              this.timelineStart = this.timelineStart - 24 * 60 * MIN_TO_MS
+              // this.timelineStart = this.timelineStart - 24 * 60 * MIN_TO_MS
             } else {
               return
             }
