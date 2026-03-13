@@ -41,9 +41,9 @@ export default Blits.Component('VerticalContainer', {
       </Element>
     </Element>
   `,
-  props: ['items', 'width', 'height'],
+  props: ['items', 'width', 'height', 'currentTime'],
   state() {
-    const now = new Date('2026-03-02T11:00:00Z')
+    const now = new Date(this.currentTime)
     const minutes = now.getMinutes()
 
     if (minutes >= 30) {
@@ -85,6 +85,7 @@ export default Blits.Component('VerticalContainer', {
         (direction === 1 && this.focused === this.items.length - 1) ||
         (direction === -1 && this.focused === 0)
       ) {
+        this.$emit('loadMoreChannels', direction)
         return
       }
       const nextFocus = Math.max(0, Math.min(this.focused + direction, this.items.length - 1))

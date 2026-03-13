@@ -18,7 +18,6 @@ export default Blits.Component('Button', {
       return this.textWidth + iconWidth + gap + paddingX
     },
   },
-
   template: `
     <Element
       :w="$width"

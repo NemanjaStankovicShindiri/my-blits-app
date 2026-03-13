@@ -59,6 +59,7 @@ export default Blits.Component('HorizontalContainer', {
       const focusItem = this.$select(`list-item-${value}`)
       if (focusItem && focusItem.$focus) {
         focusItem.$focus()
+        this.$emit('focusChange', this.items[value].data)
       }
     },
     items(newValue, oldValue) {
